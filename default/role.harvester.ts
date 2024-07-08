@@ -28,8 +28,6 @@ export default roleHarvester = {
 
                 case `hasEnergy`:
                     let spawn = creep.room.find(FIND_MY_SPAWNS)[0]
-                    console.log(spawn)
-                    console.log(creep.transfer(spawn,RESOURCE_ENERGY,creep.store.getUsedCapacity(RESOURCE_ENERGY)))
                     if(creep.transfer(spawn,RESOURCE_ENERGY,creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE){
                         creep.moveTo(spawn)
                     }
