@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loop = void 0;
 const role_harvester_1 = require("./role.harvester");
 const baseManager_1 = require("./baseManager");
-const structure_spawn_prototypes_1 = require("./structure.spawn.prototypes");
+const prototypesInit_1 = require("./prototypesInit");
 const role_upgrader_1 = require("./role.upgrader");
 const role_builder_1 = require("./role.builder");
 const memory_creep_1 = require("./memory.creep");
 function loop() {
     try {
-        (0, structure_spawn_prototypes_1.default)();
+        (0, prototypesInit_1.default)();
         console.log(`tick ${Game.time}`);
         (0, baseManager_1.default)(Game.spawns["Spawn1"].room);
         for (var name in Game.creeps) {

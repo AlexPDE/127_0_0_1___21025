@@ -12,7 +12,6 @@ exports.default = roleHarvester = {
                     break;
                 case `hasNoEnergy`:
                     let source = creep.room.find(FIND_SOURCES_ACTIVE)[0];
-                    console.log(creep.harvest(source));
                     if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(source);
                     }
@@ -22,8 +21,6 @@ exports.default = roleHarvester = {
                     break;
                 case `hasEnergy`:
                     let spawn = creep.room.find(FIND_MY_SPAWNS)[0];
-                    console.log(spawn);
-                    console.log(creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)));
                     if (creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(spawn);
                     }

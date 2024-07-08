@@ -12,7 +12,6 @@ exports.default = roleBuilder = {
                     break;
                 case `hasNoEnergy`:
                     let source = creep.room.find(FIND_SOURCES_ACTIVE)[0];
-                    console.log(creep.harvest(source));
                     if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(source);
                     }

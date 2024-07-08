@@ -1,6 +1,6 @@
 import roleHarvester from "./role.harvester";
 import baseManager from "./baseManager";
-import initPrototypes from "./structure.spawn.prototypes";
+import initPrototypes from "./prototypesInit";
 import roleUpgrader from "./role.upgrader";
 import roleBuilder from "./role.builder";
 import MemoryRole from "./memory.creep";
