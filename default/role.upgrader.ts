@@ -1,11 +1,11 @@
-let roleHarvester: {
+let roleUpgrader: {
     /**
      * @param {Creep} creep
      */
     run(creep: Creep): void
 }
 
-export default roleHarvester = {
+export default roleUpgrader = {
     run(creep): void {
         try {
             switch(creep.memory.state){
@@ -17,21 +17,21 @@ export default roleHarvester = {
                 case `hasNoEnergy`:
                     type source= Source
                     let source = creep.room.find(FIND_SOURCES_ACTIVE)[0]
-                    console.log(creep.harvest(source))
                     if(creep.harvest(source)===ERR_NOT_IN_RANGE){
                         creep.moveTo(source)
-                    }   
+                    }
                     if(creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
                         creep.memory.state = "hasEnergy"
                     }
                     break;
 
                 case `hasEnergy`:
-                    let spawn = creep.room.find(FIND_MY_SPAWNS)[0]
-                    console.log(spawn)
-                    console.log(creep.transfer(spawn,RESOURCE_ENERGY,creep.store.getUsedCapacity(RESOURCE_ENERGY)))
-                    if(creep.transfer(spawn,RESOURCE_ENERGY,creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE){
-                        creep.moveTo(spawn)
+                    type controller = StructureController
+                    let controller = creep.room.controller
+                    if (controller){
+                        if(creep.upgradeController(controller)===ERR_NOT_IN_RANGE){
+                            creep.moveTo(controller)
+                        }
                     }
                     if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
                         creep.memory.state = "hasNoEnergy"
@@ -47,9 +47,9 @@ export default roleHarvester = {
     }
 }
 
-export let typeHarvester:creepType = {
-    role:"harvester",
+export let typeUpgrader:creepType = {
+    role:"upgrader",
     body:[MOVE,WORK,CARRY],
-    name:"Harvester" +Game.time,
+    name:"Upgrader" + Game.time,
     state:"justSpawned",
 }

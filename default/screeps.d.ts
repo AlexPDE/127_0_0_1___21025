@@ -1,12 +1,11 @@
-let roleHarvester: {
-    /**
-     * @param {Creep} creep
-     */
-    run(creep: Creep): void
-}
+declare global {
+    interface CreepMemory {
+        role:string;  
+        state?:string;
+    }
 
-export default roleHarvester = {
-    run(creep): void {
-        console.log("Test")
+    interface Memory {
+        creeps: {[name:string]: CreepMemory};
     }
 }
+export{};

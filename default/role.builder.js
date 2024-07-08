@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeHarvester = void 0;
-let roleHarvester;
-exports.default = roleHarvester = {
+exports.typeBuilder = void 0;
+let roleBuilder;
+exports.default = roleBuilder = {
     run(creep) {
         try {
             switch (creep.memory.state) {
@@ -21,11 +21,11 @@ exports.default = roleHarvester = {
                     }
                     break;
                 case `hasEnergy`:
-                    let spawn = creep.room.find(FIND_MY_SPAWNS)[0];
-                    console.log(spawn);
-                    console.log(creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)));
-                    if (creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(spawn);
+                    let constructionSite = creep.room.find(FIND_CONSTRUCTION_SITES)[0];
+                    if (constructionSite) {
+                        if (creep.build(constructionSite) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(constructionSite);
+                        }
                     }
                     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
                         creep.memory.state = "hasNoEnergy";
@@ -36,14 +36,14 @@ exports.default = roleHarvester = {
             }
         }
         catch (error) {
-            console.log(`error in role.harvester`);
+            console.log(`error in role.`);
         }
     }
 };
-exports.typeHarvester = {
-    role: "harvester",
+exports.typeBuilder = {
+    role: "builder",
     body: [MOVE, WORK, CARRY],
-    name: "Harvester" + Game.time,
+    name: "Builder " + Game.time,
     state: "justSpawned",
 };
-//# sourceMappingURL=role.harvester.js.map
+//# sourceMappingURL=role.builder.js.map

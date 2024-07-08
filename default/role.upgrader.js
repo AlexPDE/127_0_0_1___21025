@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeHarvester = void 0;
-let roleHarvester;
-exports.default = roleHarvester = {
+exports.typeUpgrader = void 0;
+let roleUpgrader;
+exports.default = roleUpgrader = {
     run(creep) {
         try {
             switch (creep.memory.state) {
@@ -12,7 +12,6 @@ exports.default = roleHarvester = {
                     break;
                 case `hasNoEnergy`:
                     let source = creep.room.find(FIND_SOURCES_ACTIVE)[0];
-                    console.log(creep.harvest(source));
                     if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(source);
                     }
@@ -21,11 +20,11 @@ exports.default = roleHarvester = {
                     }
                     break;
                 case `hasEnergy`:
-                    let spawn = creep.room.find(FIND_MY_SPAWNS)[0];
-                    console.log(spawn);
-                    console.log(creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)));
-                    if (creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(spawn);
+                    let controller = creep.room.controller;
+                    if (controller) {
+                        if (creep.upgradeController(controller) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(controller);
+                        }
                     }
                     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
                         creep.memory.state = "hasNoEnergy";
@@ -40,10 +39,10 @@ exports.default = roleHarvester = {
         }
     }
 };
-exports.typeHarvester = {
-    role: "harvester",
+exports.typeUpgrader = {
+    role: "upgrader",
     body: [MOVE, WORK, CARRY],
-    name: "Harvester" + Game.time,
+    name: "Upgrader" + Game.time,
     state: "justSpawned",
 };
-//# sourceMappingURL=role.harvester.js.map
+//# sourceMappingURL=role.upgrader.js.map

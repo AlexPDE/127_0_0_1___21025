@@ -4,7 +4,9 @@ exports.typeHarvester = void 0;
 let roleHarvester;
 exports.default = roleHarvester = {
     run(creep) {
+        console.log("creep run fuction is running");
         try {
+            console.log(creep.memory.state);
             switch (creep.memory.state) {
                 case `justSpawned`:
                     console.log("new creep just spawned");
@@ -12,8 +14,8 @@ exports.default = roleHarvester = {
                     break;
                 case `hasNoEnergy`:
                     let source = creep.room.find(FIND_SOURCES_ACTIVE)[0];
-                    console.log(creep.harvest(source));
-                    if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
+                    if (creep.harvest(source)) { }
+                    else {
                         creep.moveTo(source);
                     }
                     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
@@ -22,13 +24,8 @@ exports.default = roleHarvester = {
                     break;
                 case `hasEnergy`:
                     let spawn = creep.room.find(FIND_MY_SPAWNS)[0];
-                    console.log(spawn);
-                    console.log(creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)));
                     if (creep.transfer(spawn, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(spawn);
-                    }
-                    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-                        creep.memory.state = "hasNoEnergy";
                     }
                     break;
                 default:
@@ -43,7 +40,7 @@ exports.default = roleHarvester = {
 exports.typeHarvester = {
     role: "harvester",
     body: [MOVE, WORK, CARRY],
-    name: "Harvester" + Game.time,
+    name: "Harvester",
     state: "justSpawned",
 };
-//# sourceMappingURL=role.harvester.js.map
+//# sourceMappingURL=role.harvester%20copy.js.map
