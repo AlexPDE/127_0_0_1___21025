@@ -5,6 +5,7 @@ const memory_creep_1 = require("./memory.creep");
 const role_harvester_1 = require("./role.harvester");
 const role_upgrader_1 = require("./role.upgrader");
 const role_builder_1 = require("./role.builder");
+const role_miner_1 = require("./role.miner");
 let baseManager;
 let initBaseManager;
 initBaseManager = (room) => {
@@ -20,6 +21,10 @@ initBaseManager = (room) => {
             baseflag.memory.BaseManager = {
                 requiredScreeps: {
                     miner: 0
+                },
+                requestedCreeps: {
+                    minerRequest: [],
+                    upgraderRequest: [],
                 }
             };
         }
@@ -38,6 +43,10 @@ initBaseManager = (room) => {
                 Game.flags[flagName].memory.assignedBase = baseflag[0].name;
                 if (baseflag[0].memory.BaseManager) {
                     baseflag[0].memory.BaseManager.requiredScreeps.miner = baseflag[0].memory.BaseManager.requiredScreeps.miner + 1;
+                    if (typeof (flagName) === 'string') {
+                        console.log(flagName);
+                        baseflag[0].memory.BaseManager.requestedCreeps.minerRequest.push(flagName);
+                    }
                 }
             }
         }
@@ -49,18 +58,41 @@ baseManager = (room) => {
     const harvester = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.HARVESTER);
     const upgrader = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.UPGRADER);
     const builder = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.BUILDER);
+    const miner = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.MINER);
     let spawn = room.find(FIND_MY_SPAWNS)[0];
-    if (harvester.length < 4) {
-        console.log(`trying to spawn harvester currently ${harvester.length} exist`);
-        spawn.spawnTypeCreep(spawn, role_harvester_1.typeHarvester);
-    }
-    else if (upgrader.length < 3) {
-        console.log(`trying to spawn upgrader currently ${upgrader.length} exist`);
-        spawn.spawnTypeCreep(spawn, role_upgrader_1.typeUpgrader);
-    }
-    else if (builder.length < 1) {
-        console.log(`trying to spawn upgrader currently ${builder.length} exist`);
-        spawn.spawnTypeCreep(spawn, role_builder_1.typeBuilder);
+    var baseflag = room.find(FIND_FLAGS, { filter: { color: COLOR_GREEN } })[0];
+    if (!spawn.spawning) {
+        if (baseflag) {
+            if (baseflag.memory.BaseManager) {
+                let i;
+                for (i in baseflag.memory.BaseManager.requestedCreeps) {
+                    var request = baseflag.memory.BaseManager.requestedCreeps[i];
+                    for (var k in request) {
+                        if (i == "minerRequest") {
+                            console.log(`miner is requested for source ${request}`);
+                            var ret = spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner, request[k]);
+                            console.log(ret);
+                        }
+                    }
+                }
+            }
+        }
+        else if (harvester.length < 1) {
+            console.log(`trying to spawn harvester currently ${harvester.length} exist`);
+            spawn.spawnTypeCreep(spawn, role_harvester_1.typeHarvester);
+        }
+        else if (miner.length < 1) {
+            console.log(`trying to spawn upgrader currently ${builder.length} exist`);
+            spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner);
+        }
+        else if (upgrader.length < 1) {
+            console.log(`trying to spawn upgrader currently ${upgrader.length} exist`);
+            spawn.spawnTypeCreep(spawn, role_upgrader_1.typeUpgrader);
+        }
+        else if (builder.length < 1) {
+            console.log(`trying to spawn upgrader currently ${builder.length} exist`);
+            spawn.spawnTypeCreep(spawn, role_builder_1.typeBuilder);
+        }
     }
 };
 exports.default = baseManager;

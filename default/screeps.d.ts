@@ -2,6 +2,7 @@ declare global {
     interface CreepMemory {
         role:string;  
         state?:string;
+        targetId?:string;
     }
 
     interface Memory {

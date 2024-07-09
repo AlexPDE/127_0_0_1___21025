@@ -1,11 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const memory_creep_1 = require("./memory.creep");
 let initStructureSpawnPrototypes;
 initStructureSpawnPrototypes = () => {
-    StructureSpawn.prototype.spawnTypeCreep = (spawn, creepType) => {
+    StructureSpawn.prototype.spawnTypeCreep = (spawn, creepType, targetId) => {
         console.log(`creepType.name = ${creepType.name}`);
-        var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name, { memory: { role: creepType.role, state: creepType.state } });
-        console.log(`spawnCreepReturn = ${spawnCreepReturn}`);
+        if (creepType.role == memory_creep_1.default.MINER) {
+            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name, { memory: { role: creepType.role, state: creepType.state, targetId: targetId } });
+        }
+        else {
+            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name, { memory: { role: creepType.role, state: creepType.state } });
+        }
+        return spawnCreepReturn;
     };
 };
 exports.default = initStructureSpawnPrototypes;

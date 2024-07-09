@@ -22,6 +22,9 @@ export function loop():void{
             if(creep.memory.role == MemoryRole.BUILDER){
                 roleBuilder.run(creep)
             }
+            if(creep.memory.role == MemoryRole.MINER){
+                roleBuilder.run(creep)
+            }
         }
     } catch (error) {
         console.log(error)

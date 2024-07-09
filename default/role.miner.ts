@@ -15,7 +15,9 @@ export default roleMiner = {
                     break;
 
                 case `hasNoEnergy`:
-                    creep.getEnergy(creep)
+                    var sourceId = creep.memory.targetId
+                    console.log(sourceId)
+                    console.log("test")
                     break;
 
                 case `hasEnergy`:

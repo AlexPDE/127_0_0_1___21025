@@ -23,6 +23,9 @@ function loop() {
             if (creep.memory.role == memory_creep_1.default.BUILDER) {
                 role_builder_1.default.run(creep);
             }
+            if (creep.memory.role == memory_creep_1.default.MINER) {
+                role_builder_1.default.run(creep);
+            }
         }
     }
     catch (error) {
