@@ -8,6 +8,8 @@ import { typeMiner } from "./role.miner";
 let baseManager: Function;
 let initBaseManager:Function;
 
+
+
 initBaseManager = (room:Room) =>{
     var baseflag = room.find(FIND_FLAGS,{filter:{color:COLOR_GREEN}})
     if(!baseflag[0]){
@@ -78,7 +80,10 @@ baseManager = (room:Room) =>{
                             console.log(`miner is requested for source ${request}`)
                             var ret = spawn.spawnTypeCreep(spawn,typeMiner,request[k])
                             if(ret===OK){
-                                //here the request needs to be deleted best with function to remove request 
+                                var index = request.indexOf(request[k]);
+                                if (index !== -1) {
+                                    baseflag.memory.BaseManager.requestedCreeps[i].splice(index, 1);
+                                }
                             }
                         }
                     }

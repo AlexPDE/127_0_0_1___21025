@@ -71,7 +71,10 @@ baseManager = (room) => {
                             console.log(`miner is requested for source ${request}`);
                             var ret = spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner, request[k]);
                             if (ret === OK) {
-                                //here the request needs to be deleted best with function to remove request 
+                                var index = request.indexOf(request[k]);
+                                if (index !== -1) {
+                                    baseflag.memory.BaseManager.requestedCreeps[i].splice(index, 1);
+                                }
                             }
                         }
                     }

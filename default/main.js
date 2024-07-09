@@ -30,7 +30,7 @@ function loop() {
         }
     }
     catch (error) {
-        console.log(error);
+        console.log(`${error}`);
     }
 }
 exports.loop = loop;
