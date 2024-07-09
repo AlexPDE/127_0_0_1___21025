@@ -58,7 +58,6 @@ initBaseManager = (room:Room) =>{
 
 baseManager = (room:Room) =>{
     initBaseManager(room)
-    console.log(`base Manager is running`)
     const harvester:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.HARVESTER)
     const upgrader:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.UPGRADER)
     const builder:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.BUILDER)
@@ -78,7 +77,9 @@ baseManager = (room:Room) =>{
                         if( i == "minerRequest"){
                             console.log(`miner is requested for source ${request}`)
                             var ret = spawn.spawnTypeCreep(spawn,typeMiner,request[k])
-                            console.log(ret)
+                            if(ret===OK){
+                                //here the request needs to be deleted best with function to remove request 
+                            }
                         }
                     }
                     

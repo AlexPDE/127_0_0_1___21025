@@ -10,14 +10,35 @@ export default roleMiner = {
         try {
             switch(creep.memory.state){
                 case `justSpawned`:
-                    console.log("new creep just spawned")
                     creep.memory.state = "hasNoEnergy"
                     break;
 
                 case `hasNoEnergy`:
-                    var sourceId = creep.memory.targetId
-                    console.log(sourceId)
-                    console.log("test")
+                    if(creep.memory.targetId){
+                        var sourceId = creep.memory.targetId
+                        creep.moveTo(Game.flags[sourceId].pos.x,Game.flags[sourceId].pos.y,)
+                        if(creep.pos.isEqualTo(Game.flags[sourceId].pos)){
+                            creep.memory.state = "mining"
+                        }
+                    }else{
+                        console.log(`Miner has a targetId in  memory that is not defined`)
+                    }
+                    break;
+                
+                case `mining`:
+                    if(creep.memory.targetId){
+                        var sourceId = creep.memory.targetId
+                        let source = Game.getObjectById(sourceId)
+                        if(source instanceof Source){
+                            creep.harvest(source)
+                        }else{
+                            console.log(`miner trys to havest something that i snot a source`)
+                        }
+                        
+
+                       
+                        
+                    }
                     break;
 
                 case `hasEnergy`:

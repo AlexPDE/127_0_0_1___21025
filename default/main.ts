@@ -4,12 +4,13 @@ import initPrototypes from "./prototypesInit";
 import roleUpgrader from "./role.upgrader";
 import roleBuilder from "./role.builder";
 import MemoryRole from "./memory.creep";
+import roleMiner from "./role.miner";
 
 
 export function loop():void{
     try {
         initPrototypes()
-        console.log(`tick ${Game.time}`)
+        console.log(`-----------------------tick ${Game.time}-----------------------------------`)
         baseManager(Game.spawns["Spawn1"].room)
         for(var name in Game.creeps){
             var creep:Creep = Game.creeps[name]
@@ -23,7 +24,7 @@ export function loop():void{
                 roleBuilder.run(creep)
             }
             if(creep.memory.role == MemoryRole.MINER){
-                roleBuilder.run(creep)
+                roleMiner.run(creep)
             }
         }
     } catch (error) {
