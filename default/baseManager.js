@@ -51,6 +51,11 @@ initBaseManager = (room) => {
             }
         }
     }
+    else {
+        for (var i in sourceflags) {
+            sourceflags[i].updateEnergySupply(sourceflags[i]);
+        }
+    }
 };
 baseManager = (room) => {
     initBaseManager(room);

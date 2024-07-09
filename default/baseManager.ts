@@ -51,9 +51,12 @@ initBaseManager = (room:Room) =>{
                         console.log(flagName)
                         baseflag[0].memory.BaseManager.requestedCreeps.minerRequest.push(flagName)
                     }
-                    
                 }
             }
+        }
+    }else{
+        for ( var i in sourceflags){
+            sourceflags[i].updateEnergySupply(sourceflags[i])
         }
     }
 }
