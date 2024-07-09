@@ -20,7 +20,10 @@ initFlagPrototypes = () => {
             energyAvailable = container.store.getUsedCapacity(RESOURCE_ENERGY);
         }
         var groundEnergy = flag.pos.lookFor(LOOK_ENERGY);
-        energyAvailable = energyAvailable + groundEnergy[0].amount - scheduledPickupSum;
+        if (groundEnergy[0]) {
+            energyAvailable = energyAvailable + groundEnergy[0].amount;
+        }
+        energyAvailable = energyAvailable - scheduledPickupSum;
         flag.memory.energyAvailable = energyAvailable;
     };
 };

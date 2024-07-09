@@ -25,8 +25,12 @@ initBaseManager = (room) => {
                 requestedCreeps: {
                     minerRequest: [],
                     upgraderRequest: [],
-                }
+                },
             };
+            baseflag.memory.energyGainRate = 0;
+            baseflag.memory.energyRequired = 0;
+            baseflag.memory.scheduledDeliverys = [];
+            baseflag.memory.energyTransportTicket = [];
         }
     }
     var sourceflags = room.find(FIND_FLAGS, { filter: { color: COLOR_ORANGE } });
@@ -54,6 +58,15 @@ initBaseManager = (room) => {
     else {
         for (var i in sourceflags) {
             sourceflags[i].updateEnergySupply(sourceflags[i]);
+        }
+    }
+    var demandFlags = room.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW } });
+    if (!demandFlags[0]) {
+        if (room.controller) {
+            let path = room.controller.pos.findPathTo(baseflag[0], { ignoreCreeps: true });
+            let flagName = room.createFlag(path[0].x, path[0].y, room.controller.id, COLOR_YELLOW);
+            Game.flags[flagName].memory.energyRequired = 0;
+            Game.flags[flagName].memory.scheduledDeliverys = [];
         }
     }
 };
