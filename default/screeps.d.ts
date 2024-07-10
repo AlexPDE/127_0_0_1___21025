@@ -7,6 +7,9 @@ declare global {
 
     interface Memory {
         creeps: {[name:string]: CreepMemory};
+        baseManager?:{
+            roomName:{}
+        };
     }
 }
 export{};
