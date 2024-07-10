@@ -15,19 +15,24 @@ dynamicSpawn = (baseRoom) => {
     let spawning = false;
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
     let i = 0;
-    for (i; request; i++) {
-        if (!spawning) {
-            let spawn = baseRoom.find(FIND_MY_SPAWNS)[0];
-            let ret = -1;
-            if (request[i].role == memory_creep_1.default.MINER) {
-                ret = spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner, request[i].target);
-            }
-            if (ret == OK) {
-                spawning = true;
-                console.log(i);
-            }
-            else {
-                console.log(typeof (i));
+    if (request[0]) {
+        for (i; i < request.length; i++) {
+            console.log(`i${i}`);
+            console.log(`spawning${spawning}`);
+            if (!spawning) {
+                console.log("test1");
+                let spawn = baseRoom.find(FIND_MY_SPAWNS)[0];
+                let ret = -1;
+                if (request[i].role == memory_creep_1.default.MINER) {
+                    console.log("test2");
+                    ret = spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner, request[i].target);
+                    console.log(ret);
+                }
+                if (ret == OK) {
+                    console.log("test3");
+                    spawning = true;
+                    Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
+                }
             }
         }
     }
