@@ -4,7 +4,7 @@ let initFlagPrototypes:Function
 
 initFlagPrototypes= ()=>{
     
-    Flag.prototype.updateEnergySupply = (flag:Flag) =>{
+    Flag.prototype.updateEnergySupplyFlag = (flag:Flag) =>{
         var scheduledPickupSum = 0
         if(!flag.memory.scheduledPickups){
             flag.memory.scheduledPickups = []

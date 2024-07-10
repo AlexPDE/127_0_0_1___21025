@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 let initFlagPrototypes;
 initFlagPrototypes = () => {
-    Flag.prototype.updateEnergySupply = (flag) => {
+    Flag.prototype.updateEnergySupplyFlag = (flag) => {
         var scheduledPickupSum = 0;
         if (!flag.memory.scheduledPickups) {
             flag.memory.scheduledPickups = [];
