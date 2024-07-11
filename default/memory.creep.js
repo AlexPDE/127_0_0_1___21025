@@ -6,6 +6,7 @@ var MemoryRole;
     MemoryRole["UPGRADER"] = "upgrader";
     MemoryRole["BUILDER"] = "builder";
     MemoryRole["MINER"] = "miner";
+    MemoryRole["HAULER"] = "hauler";
 })(MemoryRole || (MemoryRole = {}));
 exports.default = MemoryRole;
 //# sourceMappingURL=memory.creep.js.map

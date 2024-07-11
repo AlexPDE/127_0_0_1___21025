@@ -4,6 +4,7 @@ import {typeHarvester} from "./role.harvester";
 import { typeUpgrader } from "./role.upgrader";
 import { typeBuilder } from "./role.builder";
 import { typeMiner } from "./role.miner";
+import { typeHauler } from "./role.Hauler";
 
 let baseManager: Function;
 let initBaseManager:Function;
@@ -15,7 +16,6 @@ let addSpawnRequest: Function;
 let dynamicSpawn:Function;
 
 
-
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns
@@ -25,16 +25,15 @@ dynamicSpawn = (baseRoom:Room) =>{
             console.log(`i${i}`)
             console.log(`spawning${spawning}`)
             if(!spawning){
-                console.log("test1")
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0] 
                 let ret: ScreepsReturnCode =-1
                 if(request[i].role == MemoryRole.MINER){
-                    console.log("test2")
                     ret = spawn.spawnTypeCreep(spawn,typeMiner,request[i].target)
-                    console.log(ret)
+                }
+                if(request[i].role == MemoryRole.HAULER){
+                    ret = spawn.spawnTypeCreep(spawn,typeHauler)
                 }
                 if(ret == OK){
-                    console.log("test3")
                     spawning = true;
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i,1)
                 }
@@ -100,6 +99,7 @@ addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)
 }
 
 
+
 initBaseManager = (room:Room) =>{
 
     if(!Memory.baseManager){
@@ -115,6 +115,7 @@ initBaseManager = (room:Room) =>{
             }
         }
         addBaseFlag(Game.spawns["Spawn1"].pos)
+        addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
         addSourceFlagsForRoom(baseRoom,baseRoom)
  
         

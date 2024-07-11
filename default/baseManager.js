@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
 const role_miner_1 = require("./role.miner");
+const role_Hauler_1 = require("./role.Hauler");
 let baseManager;
 let initBaseManager;
 let addBaseFlag;
@@ -20,16 +21,15 @@ dynamicSpawn = (baseRoom) => {
             console.log(`i${i}`);
             console.log(`spawning${spawning}`);
             if (!spawning) {
-                console.log("test1");
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0];
                 let ret = -1;
                 if (request[i].role == memory_creep_1.default.MINER) {
-                    console.log("test2");
                     ret = spawn.spawnTypeCreep(spawn, role_miner_1.typeMiner, request[i].target);
-                    console.log(ret);
+                }
+                if (request[i].role == memory_creep_1.default.HAULER) {
+                    ret = spawn.spawnTypeCreep(spawn, role_Hauler_1.typeHauler);
                 }
                 if (ret == OK) {
-                    console.log("test3");
                     spawning = true;
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
                 }
@@ -99,6 +99,7 @@ initBaseManager = (room) => {
             }
         };
         addBaseFlag(Game.spawns["Spawn1"].pos);
+        addSpawnRequest(memory_creep_1.default.HAULER, Game.spawns["Spawn1"].room, Game.spawns["Spawn1"].room.name + " base");
         addSourceFlagsForRoom(baseRoom, baseRoom);
     }
     else {

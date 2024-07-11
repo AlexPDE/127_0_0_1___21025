@@ -5,10 +5,10 @@ let initStructureSpawnPrototypes;
 initStructureSpawnPrototypes = () => {
     StructureSpawn.prototype.spawnTypeCreep = (spawn, creepType, targetId) => {
         if (creepType.role == memory_creep_1.default.MINER) {
-            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name, { memory: { role: creepType.role, state: creepType.state, targetId: targetId } });
+            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state, targetId: targetId } });
         }
         else {
-            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name, { memory: { role: creepType.role, state: creepType.state } });
+            var spawnCreepReturn = spawn.spawnCreep(creepType.body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state } });
         }
         return spawnCreepReturn;
     };
