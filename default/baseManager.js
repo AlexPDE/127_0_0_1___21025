@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
-const role_builder_1 = require("./role.builder");
 const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
+const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 let baseManager;
 let initBaseManager;
 let addBaseFlag;
@@ -13,6 +13,8 @@ let removeSourceFlag;
 let addEnergyRequestFlag;
 let addSpawnRequest;
 let dynamicSpawn;
+let addUpgraderFlag;
+let removeEnergyRequestFlag;
 dynamicSpawn = (baseRoom) => {
     let spawning = false;
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
@@ -56,6 +58,7 @@ addSourceFlagsForRoom = (room, baseRoom) => {
             let path = source.pos.findPathTo(baseFlag, { ignoreCreeps: true });
             let flagName = room.createFlag(path[0].x, path[0].y, source.id, COLOR_ORANGE);
             addSpawnRequest(memory_creep_1.default.MINER, baseRoom, flagName);
+            addSpawnRequest(memory_creep_1.default.HAULER, baseRoom);
             Memory.baseManager;
             if ((flagName != -3 && -10) && Memory.baseManager) {
                 Memory.baseManager[baseRoom.name].sources.push(source.id);
@@ -78,9 +81,31 @@ removeSourceFlag = (flag, baseRoom) => {
 };
 addEnergyRequestFlag = (pos, baseRoom, name, type) => {
     let flagName = pos.createFlag(name, COLOR_YELLOW);
-    let flag = Game.flags[flagName];
-    flag.memory.assignedBase = baseRoom.name;
-    flag.memory.type = type;
+    console.log(flagName);
+    if ((flagName != -3 && -10) && Memory.baseManager) {
+        let flag = Game.flags[flagName];
+        flag.memory.assignedBase = baseRoom.name;
+        flag.memory.type = type;
+        console.log(Memory.baseManager[baseRoom.name]);
+        Memory.baseManager[baseRoom.name].energyRequestsFlags.push(name);
+    }
+};
+removeEnergyRequestFlag = (name) => {
+    let flag = Game.flags[name];
+    if (flag.memory.assignedBase) {
+        for (let i = 0; i < Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags.length; i++)
+            if (Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags[i] == name) {
+                Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags.splice(i, 1);
+            }
+    }
+    flag.remove();
+};
+addUpgraderFlag = (baseRoom) => {
+    if (baseRoom.controller) {
+        let path = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name], { ignoreCreeps: true });
+        let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name);
+        addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id, energyRequestFlagTypes_1.default.UPGRADER);
+    }
 };
 initBaseManager = (room) => {
     if (!Memory.baseManager) {
@@ -96,33 +121,39 @@ initBaseManager = (room) => {
             }
         };
         addBaseFlag(Game.spawns["Spawn1"].pos);
-        addSpawnRequest(memory_creep_1.default.HAULER, Game.spawns["Spawn1"].room, Game.spawns["Spawn1"].room.name + " base");
+        //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
         addSourceFlagsForRoom(baseRoom, baseRoom);
+        addUpgraderFlag(room);
     }
     else {
         //------------------------------------------this is only for testing puposes--------------------------------------------
+        addUpgraderFlag(Game.rooms["W8N3"]);
+        removeEnergyRequestFlag("1bc30772347c388");
         // removeSourceFlag(Game.flags["26f20772347f879"],Game.spawns["Spawn1"].room)
         // removeSourceFlag(Game.flags["71ac0772347ffe6"],Game.spawns["Spawn1"].room)
         // delete Memory.baseManager
     }
     //--------------------------------------------------------------------------------------------------------
-    var baseflag = room.find(FIND_FLAGS, { filter: { color: COLOR_GREEN } });
-    if (!baseflag[0]) {
-        console.log(`there is no base flag`);
-        var sourceflags = room.find(FIND_FLAGS, { filter: { color: COLOR_ORANGE } });
-        for (var i in sourceflags) {
-            sourceflags[i].updateEnergySupplyFlag(sourceflags[i]);
-        }
-        var demandFlags = room.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW } });
-        if (!demandFlags[0]) {
-            if (room.controller) {
-                let path = room.controller.pos.findPathTo(baseflag[0], { ignoreCreeps: true });
-                let flagName = room.createFlag(path[0].x, path[0].y, room.controller.id, COLOR_YELLOW);
-                Game.flags[flagName].memory.energyRequired = 0;
-                Game.flags[flagName].memory.scheduledDeliverys = [];
-            }
-        }
-    }
+    //     var baseflag = room.find(FIND_FLAGS,{filter:{color:COLOR_GREEN}})
+    //     if(!baseflag[0]){
+    //         console.log(`there is no base flag`)
+    //     var sourceflags = room.find(FIND_FLAGS,{filter:{color:COLOR_ORANGE}})
+    //             for ( var i in sourceflags){
+    //                 sourceflags[i].updateEnergySupplyFlag(sourceflags[i])
+    //             }
+    //         var demandFlags = room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})
+    //         if(!demandFlags[0]){
+    //             if(room.controller){
+    //                 let path:PathStep[] = room.controller.pos.findPathTo(baseflag[0],{ignoreCreeps:true})
+    //                 let flagName = room.createFlag(path[0].x,path[0].y,room.controller.id, COLOR_YELLOW)
+    //                 Game.flags[flagName].memory.energyRequired = 0
+    //                 Game.flags[flagName].memory.scheduledDeliverys = []
+    //                 if((flagName!= -3 && -10)&&Memory.baseManager){
+    //                     addSpawnRequest(MemoryRole.UPGRADER,room,flagName)
+    //                 }
+    //             }        
+    //         }
+    //     }
 };
 baseManager = (room) => {
     initBaseManager(room);
@@ -166,10 +197,10 @@ baseManager = (room) => {
     //     console.log(`trying to spawn upgrader currently ${upgrader.length} exist`)
     //     spawn.spawnTypeCreep(spawn,typeUpgrader)
     // }else
-    if (builder.length < 1) {
-        console.log(`trying to spawn upgrader currently ${builder.length} exist`);
-        spawn.spawnTypeCreep(spawn, role_builder_1.typeBuilder);
-    }
+    //  if (builder.length <1){
+    //      console.log(`trying to spawn upgrader currently ${builder.length} exist`)
+    //     spawn.spawnTypeCreep(spawn,typeBuilder)
+    //  }
 };
 exports.default = baseManager;
 //# sourceMappingURL=baseManager.js.map

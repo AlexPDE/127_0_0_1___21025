@@ -5,6 +5,7 @@ import { typeUpgrader } from "./role.upgrader";
 import { typeBuilder } from "./role.builder";
 import { typeMiner } from "./role.miner";
 import { typeHauler } from "./role.Hauler";
+import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
 
 let baseManager: Function;
 let initBaseManager:Function;
@@ -14,7 +15,8 @@ let removeSourceFlag:Function;
 let addEnergyRequestFlag:Function;
 let addSpawnRequest: Function;
 let dynamicSpawn:Function;
-
+let addUpgraderFlag:Function;
+let removeEnergyRequestFlag:Function;
 
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
@@ -40,9 +42,13 @@ dynamicSpawn = (baseRoom:Room) =>{
     }
 }
 
+
+
 addBaseFlag = (pos:RoomPosition)=>{
     pos.createFlag(pos.roomName + " base", COLOR_GREEN)
 }
+
+
 
 addSpawnRequest = (type: string,baseRoom:Room,target?:string) =>{
     if(target){
@@ -50,9 +56,9 @@ addSpawnRequest = (type: string,baseRoom:Room,target?:string) =>{
     }else{
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push({role:type})
     }
-    
-
 }
+
+
 
 addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
     var sources = room.find(FIND_SOURCES)
@@ -63,43 +69,66 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
             let path:PathStep[] = source.pos.findPathTo(baseFlag,{ignoreCreeps:true})
             let flagName = room.createFlag(path[0].x,path[0].y,source.id, COLOR_ORANGE)
             addSpawnRequest(MemoryRole.MINER,baseRoom,flagName)
+            addSpawnRequest(MemoryRole.HAULER,baseRoom)
             Memory.baseManager
             if((flagName!= -3 && -10)&&Memory.baseManager){
                 Memory.baseManager[baseRoom.name].sources.push(source.id)
                 Game.flags[flagName].memory.hasMiner = false
                 Game.flags[flagName].pos.createConstructionSite(STRUCTURE_CONTAINER)
-                
-                
             }
         }
     }	
 }
 
+
+
 removeSourceFlag = (flag:Flag,baseRoom:Room) =>{
-    
     if(Memory.baseManager){
         let memEntry: string
         if(flag){
             flag.remove()
         }else{
             console.log(`remove Source Flag is trying to remove flag ${flag} that does't exist.`)
-        }
-        
+        }  
     }
 }
 
 
+
 addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)=>{
     let flagName = pos.createFlag(name,COLOR_YELLOW)
-    let flag = Game.flags[flagName]
-    flag.memory.assignedBase = baseRoom.name
-    flag.memory.type = type
+    console.log(flagName)
+    if((flagName!= -3 && -10)&&Memory.baseManager){
+        let flag = Game.flags[flagName]
+        flag.memory.assignedBase = baseRoom.name
+        flag.memory.type = type
+        console.log(Memory.baseManager[baseRoom.name])
+        Memory.baseManager[baseRoom.name].energyRequestsFlags.push(name)
+    }
+}
+
+removeEnergyRequestFlag = (name:string) =>{
+    let flag = Game.flags[name]
+    if(flag.memory.assignedBase){
+        for(let i = 0; i < Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags.length;i++)
+            if(Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags[i] == name){
+                Memory.baseManager[flag.memory.assignedBase].energyRequestsFlags.splice(i,1)
+            }
+    }
+    flag.remove()
+}
+
+addUpgraderFlag=(baseRoom:Room)=>{
+    if(baseRoom.controller){
+        let path:PathStep[] = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name],{ignoreCreeps:true})
+        let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name)
+        addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id,EnergyRequestFlagTypes.UPGRADER)
+    }
 }
 
 
 
 initBaseManager = (room:Room) =>{
-
     if(!Memory.baseManager){
         //initialisation first tick. 
         console.log(`base Memory is initiated, this should only happen on the first tick.`)
@@ -113,13 +142,16 @@ initBaseManager = (room:Room) =>{
             }
         }
         addBaseFlag(Game.spawns["Spawn1"].pos)
-        addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
+        //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
         addSourceFlagsForRoom(baseRoom,baseRoom)
+        addUpgraderFlag(room)
+
  
         
     }else{
         //------------------------------------------this is only for testing puposes--------------------------------------------
-        
+        addUpgraderFlag(Game.rooms["W8N3"])
+        removeEnergyRequestFlag("1bc30772347c388")
         // removeSourceFlag(Game.flags["26f20772347f879"],Game.spawns["Spawn1"].room)
         // removeSourceFlag(Game.flags["71ac0772347ffe6"],Game.spawns["Spawn1"].room)
         
@@ -127,28 +159,29 @@ initBaseManager = (room:Room) =>{
     }
 
     //--------------------------------------------------------------------------------------------------------
-    var baseflag = room.find(FIND_FLAGS,{filter:{color:COLOR_GREEN}})
-    if(!baseflag[0]){
-        console.log(`there is no base flag`)
+//     var baseflag = room.find(FIND_FLAGS,{filter:{color:COLOR_GREEN}})
+//     if(!baseflag[0]){
+//         console.log(`there is no base flag`)
 
+//     var sourceflags = room.find(FIND_FLAGS,{filter:{color:COLOR_ORANGE}})
+//             for ( var i in sourceflags){
+//                 sourceflags[i].updateEnergySupplyFlag(sourceflags[i])
+//             }
+//         var demandFlags = room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})
+//         if(!demandFlags[0]){
+//             if(room.controller){
+//                 let path:PathStep[] = room.controller.pos.findPathTo(baseflag[0],{ignoreCreeps:true})
+//                 let flagName = room.createFlag(path[0].x,path[0].y,room.controller.id, COLOR_YELLOW)
+//                 Game.flags[flagName].memory.energyRequired = 0
+//                 Game.flags[flagName].memory.scheduledDeliverys = []
+//                 if((flagName!= -3 && -10)&&Memory.baseManager){
+//                     addSpawnRequest(MemoryRole.UPGRADER,room,flagName)
+//                 }
+//             }        
+//         }
 
-
-    var sourceflags = room.find(FIND_FLAGS,{filter:{color:COLOR_ORANGE}})
-            for ( var i in sourceflags){
-                sourceflags[i].updateEnergySupplyFlag(sourceflags[i])
-            }
-        var demandFlags = room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})
-        if(!demandFlags[0]){
-            if(room.controller){
-                let path:PathStep[] = room.controller.pos.findPathTo(baseflag[0],{ignoreCreeps:true})
-                let flagName = room.createFlag(path[0].x,path[0].y,room.controller.id, COLOR_YELLOW)
-                Game.flags[flagName].memory.energyRequired = 0
-                Game.flags[flagName].memory.scheduledDeliverys = []
-            }        
-        }
-
-    }
-}
+//     }
+ }
 
 baseManager = (room:Room) =>{
     initBaseManager(room)
@@ -196,10 +229,11 @@ baseManager = (room:Room) =>{
         //     console.log(`trying to spawn upgrader currently ${upgrader.length} exist`)
         //     spawn.spawnTypeCreep(spawn,typeUpgrader)
         // }else
-         if (builder.length <1){
-             console.log(`trying to spawn upgrader currently ${builder.length} exist`)
-            spawn.spawnTypeCreep(spawn,typeBuilder)
-         }
+        //  if (builder.length <1){
+        //      console.log(`trying to spawn upgrader currently ${builder.length} exist`)
+        //     spawn.spawnTypeCreep(spawn,typeBuilder)
+        //  }
     }
+    
 
 export default baseManager

@@ -17,6 +17,8 @@ initCreepPrototypes= ()=>{
                 if(ret = ERR_NOT_IN_RANGE){
                     creep.moveTo(target)
                 }
+            }else{
+                delete creep.memory.targetId
             }
         }
         

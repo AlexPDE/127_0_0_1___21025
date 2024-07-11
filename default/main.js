@@ -31,6 +31,7 @@ function loop() {
             if (creep.memory.role == memory_creep_1.default.HAULER) {
                 role_Hauler_1.default.run(creep);
             }
+            //testing Functions here--------------------------
         }
     }
     catch (error) {

@@ -30,6 +30,10 @@ export function loop():void{
             if(creep.memory.role == MemoryRole.HAULER){
                 roleHauler.run(creep)
             }
+
+            //testing Functions here--------------------------
+
+
         }
     } catch (error) {
         console.log(`${error}`)
