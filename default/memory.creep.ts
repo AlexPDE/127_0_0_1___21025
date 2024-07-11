@@ -7,9 +7,3 @@ enum MemoryRole{
 }
 
 export default MemoryRole;
-
-enum EnergyRequestFlagTypes{
-    UPGRADER = "upgraderRequestFlag"
-}
-
-export default EnergyRequestFlagTypes

@@ -9,9 +9,4 @@ var MemoryRole;
     MemoryRole["HAULER"] = "hauler";
 })(MemoryRole || (MemoryRole = {}));
 exports.default = MemoryRole;
-var EnergyRequestFlagTypes;
-(function (EnergyRequestFlagTypes) {
-    EnergyRequestFlagTypes["UPGRADER"] = "upgraderRequestFlag";
-})(EnergyRequestFlagTypes || (EnergyRequestFlagTypes = {}));
-exports.default = EnergyRequestFlagTypes;
 //# sourceMappingURL=memory.creep.js.map

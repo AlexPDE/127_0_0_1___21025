@@ -11,14 +11,14 @@ declare global {
         baseManager:{
            [key:string]:{
             sources:string[];
-            energyRequestsFlags:string[];
+            energyRequests:string[];
             RecquestesSpawns:spawnRequestType[];
            };
         };
     }
 
     interface spawnRequestType{
-        role?:string
+        role:string
         body?:string[]
         target?:string
     }
@@ -28,6 +28,5 @@ declare global {
         energyGainRate:number;
     }
 
-    
 }
 export{};

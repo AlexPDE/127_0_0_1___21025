@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 let initCreepPrototypes;
 initCreepPrototypes = () => {
     Creep.prototype.getEnergy = (creep) => {
@@ -30,14 +31,49 @@ initCreepPrototypes = () => {
         }
     };
     Creep.prototype.deliverEnergy = (creep) => {
-        let spawn = creep.room.find(FIND_MY_SPAWNS)[0];
-        if (spawn) {
-            let ret = creep.transfer(spawn, RESOURCE_ENERGY);
-            if (ret == ERR_NOT_IN_RANGE) {
-                creep.moveTo(spawn);
+        console.log("deliver energy prototype");
+        if (!creep.memory.targetId) {
+            if (creep.memory.base) {
+                console.log("test1");
+                let energyRequest = Memory.baseManager[creep.memory.base].energyRequests;
+                for (let i = 0; i < energyRequest.length; i++) {
+                    let flag = Game.flags[energyRequest[i]];
+                    if (flag.memory.energyRequired) {
+                        if (flag.memory.energyRequired > 0) {
+                            creep.memory.targetId = energyRequest[i];
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            let targetFlag = Game.flags[creep.memory.targetId];
+            if (targetFlag.memory.type = energyRequestFlagTypes_1.default.BUILDER) {
+                if (targetFlag.memory.assignedBuilder) {
+                    let target = Game.getObjectById(targetFlag.memory.assignedBuilder);
+                    if (target instanceof Creep) {
+                        let ret = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
+                        if (ret === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(target);
+                        }
+                    }
+                }
             }
         }
     };
+    // if(builderCreep instanceof Creep){
+    //     let ret = creep.transfer(builderCreep,RESOURCE_ENERGY,creep.store.getUsedCapacity(RESOURCE_ENERGY))
+    //     if (ret === ERR_NOT_IN_RANGE){
+    //         creep.moveTo(builderCreep)
+    //     }
+    // }
+    // let spawn = creep.room.find(FIND_MY_SPAWNS)[0]
+    // if(spawn){
+    //     let ret:ScreepsReturnCode = creep.transfer(spawn,RESOURCE_ENERGY)
+    //     if(ret ==ERR_NOT_IN_RANGE){
+    //         creep.moveTo(spawn)
+    //     }
+    // }
 };
 exports.default = initCreepPrototypes;
 //# sourceMappingURL=creep.prototype.js.map

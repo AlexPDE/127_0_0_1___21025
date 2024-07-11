@@ -11,7 +11,6 @@ initFlagPrototypes = () => {
             flag.memory.energyAvailable = 0;
         }
         for (let i in flag.memory.scheduledPickups) {
-            console.log(i);
             // add all scheduled pickups here. 
         }
         var energyAvailable = 0;
