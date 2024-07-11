@@ -14,6 +14,10 @@ exports.default = roleHauler = {
                     creep.getEnergy(creep);
                     break;
                 case `hasEnergy`:
+                    creep.deliverEnergy(creep);
+                    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+                        creep.memory.state = "hasNoEnergy";
+                    }
                     break;
                 default:
                     console.log(`creep ${creep} has the memory state ${creep.memory.state}, this is not defined`);

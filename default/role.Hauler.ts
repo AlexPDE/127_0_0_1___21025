@@ -19,6 +19,10 @@ export default roleHauler = {
                     break;
 
                 case `hasEnergy`:
+                    creep.deliverEnergy(creep)
+                    if(creep.store.getUsedCapacity(RESOURCE_ENERGY)== 0){
+                        creep.memory.state = "hasNoEnergy"
+                    }
                     break;
 
                 default:

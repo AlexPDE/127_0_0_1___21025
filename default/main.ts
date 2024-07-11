@@ -5,6 +5,7 @@ import roleUpgrader from "./role.upgrader";
 import roleBuilder from "./role.builder";
 import MemoryRole from "./memory.creep";
 import roleMiner from "./role.miner";
+import roleHauler from "./role.Hauler";
 
 
 export function loop():void{
@@ -25,6 +26,9 @@ export function loop():void{
             }
             if(creep.memory.role == MemoryRole.MINER){
                 roleMiner.run(creep)
+            }
+            if(creep.memory.role == MemoryRole.HAULER){
+                roleHauler.run(creep)
             }
         }
     } catch (error) {

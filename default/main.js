@@ -8,6 +8,7 @@ const role_upgrader_1 = require("./role.upgrader");
 const role_builder_1 = require("./role.builder");
 const memory_creep_1 = require("./memory.creep");
 const role_miner_1 = require("./role.miner");
+const role_Hauler_1 = require("./role.Hauler");
 function loop() {
     try {
         (0, prototypesInit_1.default)();
@@ -26,6 +27,9 @@ function loop() {
             }
             if (creep.memory.role == memory_creep_1.default.MINER) {
                 role_miner_1.default.run(creep);
+            }
+            if (creep.memory.role == memory_creep_1.default.HAULER) {
+                role_Hauler_1.default.run(creep);
             }
         }
     }

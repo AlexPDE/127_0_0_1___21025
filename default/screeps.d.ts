@@ -3,6 +3,7 @@ declare global {
         role:string;  
         state?:string;
         targetId?:string;
+        base?:string;
     }
 
     interface Memory {

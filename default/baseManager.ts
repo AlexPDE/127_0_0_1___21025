@@ -22,8 +22,6 @@ dynamicSpawn = (baseRoom:Room) =>{
     let i = 0
     if(request[0]){
         for ( i; i < request.length; i++ ){
-            console.log(`i${i}`)
-            console.log(`spawning${spawning}`)
             if(!spawning){
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0] 
                 let ret: ScreepsReturnCode =-1
