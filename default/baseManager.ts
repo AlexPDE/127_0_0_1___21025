@@ -62,14 +62,14 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
         if(baseFlag){
             let path:PathStep[] = source.pos.findPathTo(baseFlag,{ignoreCreeps:true})
             let flagName = room.createFlag(path[0].x,path[0].y,source.id, COLOR_ORANGE)
-            Game.flags[flagName].memory = {
-                hasMiner: false
-            }
             addSpawnRequest(MemoryRole.MINER,baseRoom,flagName)
             Memory.baseManager
             if((flagName!= -3 && -10)&&Memory.baseManager){
                 Memory.baseManager[baseRoom.name].sources.push(source.id)
                 Game.flags[flagName].memory.hasMiner = false
+                Game.flags[flagName].pos.createConstructionSite(STRUCTURE_CONTAINER)
+                
+                
             }
         }
     }	
@@ -196,10 +196,10 @@ baseManager = (room:Room) =>{
         //     console.log(`trying to spawn upgrader currently ${upgrader.length} exist`)
         //     spawn.spawnTypeCreep(spawn,typeUpgrader)
         // }else
-        // if (builder.length <1){
-        //     console.log(`trying to spawn upgrader currently ${builder.length} exist`)
-        //     spawn.spawnTypeCreep(spawn,typeBuilder)
-        // }
+         if (builder.length <1){
+             console.log(`trying to spawn upgrader currently ${builder.length} exist`)
+            spawn.spawnTypeCreep(spawn,typeBuilder)
+         }
     }
 
 export default baseManager

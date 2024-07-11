@@ -5,6 +5,7 @@ let roleHauler: {
     run(creep: Creep): void
 }
 
+
 export default roleHauler = {
     run(creep): void {
         try {
