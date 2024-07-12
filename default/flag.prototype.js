@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const baseManager_1 = require("./baseManager");
 let initFlagPrototypes;
 initFlagPrototypes = () => {
     Flag.prototype.updateEnergySupplyFlag = (flag) => {
@@ -43,6 +44,29 @@ initFlagPrototypes = () => {
             }
         }
         flag.remove();
+    };
+    Flag.prototype.updateUpgraderFlag = (flag) => {
+        let container = flag.pos.lookFor(LOOK_STRUCTURES)[0];
+        if (container instanceof StructureContainer) {
+            flag.memory.energyRequired = container.store.getFreeCapacity(RESOURCE_ENERGY);
+        }
+    };
+    Flag.prototype.updateSpawnFlag = (flag) => {
+        if (flag.room) {
+            let extensions = flag.room.find(FIND_STRUCTURES, { filter: (i) => i.structureType == STRUCTURE_EXTENSION });
+            for (let i = 0; i < extensions.length; i++) {
+                let willAdd = true;
+                for (let k of flag.memory.extensions) {
+                    if (k == extensions[i].id) {
+                        willAdd = false;
+                    }
+                }
+                if (willAdd) {
+                    flag.memory.extensions.push(extensions[i].id);
+                    (0, baseManager_1.addEnergyRequestFlag)(extensions[i].pos, extensions[i].room, extensions[i].id, "extension");
+                }
+            }
+        }
     };
 };
 exports.default = initFlagPrototypes;

@@ -1,4 +1,5 @@
 import * as _ from "lodash"
+import { addEnergyRequestFlag } from "./baseManager"
 
 let initFlagPrototypes:Function
 
@@ -47,6 +48,32 @@ initFlagPrototypes= ()=>{
             }
         }
         flag.remove()
+    }
+
+    Flag.prototype.updateUpgraderFlag = (flag:Flag) =>{
+        let container = flag.pos.lookFor(LOOK_STRUCTURES)[0]
+        if (container instanceof StructureContainer){
+            flag.memory.energyRequired = container.store.getFreeCapacity(RESOURCE_ENERGY)
+        }
+    }
+
+    Flag.prototype.updateSpawnFlag = (flag:Flag) =>{
+        if(flag.room){
+            let extensions = flag.room.find(FIND_STRUCTURES,{filter: (i) => i.structureType ==STRUCTURE_EXTENSION})
+            for (let i = 0 ; i < extensions.length ; i++){
+                let willAdd = true
+                for (let k of flag.memory.extensions){
+                    if (k == extensions[i].id){
+                        willAdd = false
+                    }
+                }
+                if(willAdd){
+                    flag.memory.extensions.push(extensions[i].id)
+                    addEnergyRequestFlag(extensions[i].pos, extensions[i].room, extensions[i].id, "extension")
+                }
+            }
+            
+        }
     }
 }
 

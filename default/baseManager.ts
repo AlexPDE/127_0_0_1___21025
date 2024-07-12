@@ -77,8 +77,10 @@ addBaseFlag = (spawn:StructureSpawn)=>{
     if(flagName != -3 &&flagName != -10){
         Memory.baseManager[spawn.pos.roomName].energyRequests.push(flagName)
         Game.flags[flagName].memory.type = "base"
+        Game.flags[flagName].memory.extensions = []
         spawn.room.memory.baseFlagName = flagName
     }
+
 }
 
 
@@ -136,6 +138,7 @@ addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)
         Memory.baseManager[baseRoom.name].energyRequests.push(name)
     }
 }
+export {addEnergyRequestFlag}
 
 removeEnergyRequestFlag = (name:string) =>{
     let flag = Game.flags[name]
@@ -201,6 +204,8 @@ baseManager = (room:Room) =>{
 
     let strategy = Memory.baseManager[room.name].strategy
     let spawn = room.find(FIND_MY_SPAWNS)[0]
+    let upgraderFlag = spawn.room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})[0]
+    let spawnFlag = Game.flags[spawn.id]
     switch(strategy){
         case"initiate":
             Memory.baseManager[room.name].strategy = "pushToRCL2"
@@ -232,10 +237,11 @@ baseManager = (room:Room) =>{
             if(spawn.room.energyCapacityAvailable == 550){
                 Memory.baseManager[room.name].strategy = "planRCL2UpgraderContainer"
             }
+            spawnFlag.updateSpawnFlag(spawnFlag)
+            
             break;
 
         case"planRCL2UpgraderContainer":
-            let upgraderFlag = spawn.room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})[0]
             if(upgraderFlag){
                 upgraderFlag.pos.createConstructionSite(STRUCTURE_CONTAINER)
             }
@@ -244,13 +250,13 @@ baseManager = (room:Room) =>{
             break;
 
         case"buildRCL2UpgraderContainer":
-
-                        
+            upgraderFlag.updateUpgraderFlag(upgraderFlag)
             break;
 
 
         case"buildRCL2Base":
             Memory.baseManager[room.name].strategy = "buildRCL2BaseExtenstions"
+            
             break;
 
 
@@ -260,5 +266,6 @@ baseManager = (room:Room) =>{
     
 
 export default baseManager
+
 
 

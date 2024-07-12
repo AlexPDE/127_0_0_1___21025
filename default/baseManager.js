@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addSpawnRequest = void 0;
+exports.addEnergyRequestFlag = exports.addSpawnRequest = void 0;
 const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
 const role_upgrader_1 = require("./role.upgrader");
@@ -67,6 +67,7 @@ addBaseFlag = (spawn) => {
     if (flagName != -3 && flagName != -10) {
         Memory.baseManager[spawn.pos.roomName].energyRequests.push(flagName);
         Game.flags[flagName].memory.type = "base";
+        Game.flags[flagName].memory.extensions = [];
         spawn.room.memory.baseFlagName = flagName;
     }
 };
@@ -108,7 +109,7 @@ addConstructionFlag = (constructionsSite, baseRoom) => {
         Game.flags[flagName].memory.assignedBase = baseRoom.name;
     }
 };
-addEnergyRequestFlag = (pos, baseRoom, name, type) => {
+exports.addEnergyRequestFlag = addEnergyRequestFlag = (pos, baseRoom, name, type) => {
     let flagName = pos.createFlag(name, COLOR_YELLOW);
     if ((flagName != -3 && -10) && Memory.baseManager) {
         let flag = Game.flags[flagName];
@@ -175,6 +176,8 @@ baseManager = (room) => {
     //------------------------------------- base stategy -----------------------------------
     let strategy = Memory.baseManager[room.name].strategy;
     let spawn = room.find(FIND_MY_SPAWNS)[0];
+    let upgraderFlag = spawn.room.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW } })[0];
+    let spawnFlag = Game.flags[spawn.id];
     switch (strategy) {
         case "initiate":
             Memory.baseManager[room.name].strategy = "pushToRCL2";
@@ -203,15 +206,16 @@ baseManager = (room) => {
             if (spawn.room.energyCapacityAvailable == 550) {
                 Memory.baseManager[room.name].strategy = "planRCL2UpgraderContainer";
             }
+            spawnFlag.updateSpawnFlag(spawnFlag);
             break;
         case "planRCL2UpgraderContainer":
-            let upgraderFlag = spawn.room.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW } })[0];
             if (upgraderFlag) {
                 upgraderFlag.pos.createConstructionSite(STRUCTURE_CONTAINER);
             }
             Memory.baseManager[room.name].strategy = "buildRCL2UpgraderContainer";
             break;
         case "buildRCL2UpgraderContainer":
+            upgraderFlag.updateUpgraderFlag(upgraderFlag);
             break;
         case "buildRCL2Base":
             Memory.baseManager[room.name].strategy = "buildRCL2BaseExtenstions";
