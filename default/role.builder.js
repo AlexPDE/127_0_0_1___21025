@@ -21,6 +21,17 @@ exports.default = roleBuilder = {
                                 creep.moveTo(constructionSite);
                             }
                         }
+                        else {
+                            console.log(`constructionSite is finished`, flag);
+                            flag.removeConstructionFlag(flag);
+                            delete creep.memory.targetId;
+                        }
+                    }
+                    else {
+                        let constructionFlag = creep.room.find(FIND_FLAGS, { filter: { color: COLOR_BROWN } })[0];
+                        if (constructionFlag) {
+                            creep.memory.targetId = constructionFlag.name;
+                        }
                     }
                     break;
                 case `hasNoEnergy`:
@@ -51,7 +62,7 @@ exports.default = roleBuilder = {
             }
         }
         catch (error) {
-            console.log(`error in role.`);
+            console.log(`error in role.builder ${error}`);
         }
     }
 };

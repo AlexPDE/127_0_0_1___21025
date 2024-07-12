@@ -9,11 +9,18 @@ const role_builder_1 = require("./role.builder");
 const memory_creep_1 = require("./memory.creep");
 const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
+const diedCreepManagment_1 = require("./diedCreepManagment");
 function loop() {
     try {
-        console.log(Game.getObjectById("1bc30772347c388"));
-        (0, prototypesInit_1.default)();
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
+        (0, prototypesInit_1.default)();
+        for (let i in Game.flags) {
+            let flag = Game.flags[i];
+            if (flag.memory.type == "source") {
+                flag.updateEnergySupplyFlag(flag);
+            }
+        }
+        (0, diedCreepManagment_1.default)();
         (0, baseManager_1.default)(Game.spawns["Spawn1"].room);
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];

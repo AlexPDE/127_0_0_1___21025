@@ -17,7 +17,8 @@ let addSpawnRequest: Function;
 let dynamicSpawn:Function;
 let addUpgraderFlag:Function;
 let removeEnergyRequestFlag:Function;
-let addConstructionFlag:Function
+let addConstructionFlag:Function;
+let removeConstructionFlag:Function;
 
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
@@ -36,6 +37,9 @@ dynamicSpawn = (baseRoom:Room) =>{
                 }
                 if(request[i].role == MemoryRole.BUILDER &&!spawning){
                     ret = spawn.spawnTypeCreep(spawn,typeBuilder,request[i].target)
+                }
+                if(request[i].role == MemoryRole.UPGRADER &&!spawning){
+                    ret = spawn.spawnTypeCreep(spawn,typeUpgrader)
                 }
                 if(ret == OK){
                     spawning = true;
@@ -61,6 +65,10 @@ addSpawnRequest = (type: string,baseRoom:Room,target?:string) =>{
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry)
     }
 }
+
+export {addSpawnRequest}
+
+
 
 
 addBaseFlag = (spawn:StructureSpawn)=>{
@@ -89,6 +97,7 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
                 addSpawnRequest(MemoryRole.HAULER,baseRoom)
                 Memory.baseManager[baseRoom.name].sources.push(source.id)
                 Game.flags[flagName].memory.hasMiner = false
+                Game.flags[flagName].memory.type = "source"
                 Game.flags[flagName].pos.createConstructionSite(STRUCTURE_CONTAINER)
             }
         }
@@ -113,8 +122,11 @@ addConstructionFlag = (constructionsSite: ConstructionSite,baseRoom:Room) =>{
     if(flagName != -3 &&flagName != -10){
         Game.flags[flagName].memory.energyRequired = constructionsSite.progressTotal
         Game.flags[flagName].memory.type = "construction"
+        Game.flags[flagName].memory.assignedBase = baseRoom.name
     }
 }
+
+
 
 
 addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)=>{
@@ -139,11 +151,13 @@ removeEnergyRequestFlag = (name:string) =>{
 }
 
 
+
 addUpgraderFlag=(baseRoom:Room)=>{
     if(baseRoom.controller){
         let path:PathStep[] = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name],{ignoreCreeps:true})
         let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name)
         addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id,EnergyRequestFlagTypes.UPGRADER)
+        addSpawnRequest(MemoryRole.UPGRADER,baseRoom)
     }
 }
 

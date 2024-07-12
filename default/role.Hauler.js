@@ -17,6 +17,7 @@ exports.default = roleHauler = {
                     creep.deliverEnergy(creep);
                     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
                         creep.memory.state = "hasNoEnergy";
+                        delete creep.memory.targetId;
                     }
                     break;
                 default:
@@ -24,7 +25,7 @@ exports.default = roleHauler = {
             }
         }
         catch (error) {
-            console.log(`error in role.hauler`);
+            console.log(`error in role.hauler ${error}`);
         }
     }
 };

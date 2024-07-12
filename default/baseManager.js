@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addSpawnRequest = void 0;
 const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
+const role_upgrader_1 = require("./role.upgrader");
 const role_builder_1 = require("./role.builder");
 const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
@@ -17,6 +19,7 @@ let dynamicSpawn;
 let addUpgraderFlag;
 let removeEnergyRequestFlag;
 let addConstructionFlag;
+let removeConstructionFlag;
 dynamicSpawn = (baseRoom) => {
     let spawning = false;
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
@@ -35,6 +38,9 @@ dynamicSpawn = (baseRoom) => {
                 if (request[i].role == memory_creep_1.default.BUILDER && !spawning) {
                     ret = spawn.spawnTypeCreep(spawn, role_builder_1.typeBuilder, request[i].target);
                 }
+                if (request[i].role == memory_creep_1.default.UPGRADER && !spawning) {
+                    ret = spawn.spawnTypeCreep(spawn, role_upgrader_1.typeUpgrader);
+                }
                 if (ret == OK) {
                     spawning = true;
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
@@ -46,7 +52,7 @@ dynamicSpawn = (baseRoom) => {
         }
     }
 };
-addSpawnRequest = (type, baseRoom, target) => {
+exports.addSpawnRequest = addSpawnRequest = (type, baseRoom, target) => {
     if (target) {
         let entry = { role: type, target: target };
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
@@ -78,6 +84,7 @@ addSourceFlagsForRoom = (room, baseRoom) => {
                 addSpawnRequest(memory_creep_1.default.HAULER, baseRoom);
                 Memory.baseManager[baseRoom.name].sources.push(source.id);
                 Game.flags[flagName].memory.hasMiner = false;
+                Game.flags[flagName].memory.type = "source";
                 Game.flags[flagName].pos.createConstructionSite(STRUCTURE_CONTAINER);
             }
         }
@@ -100,6 +107,7 @@ addConstructionFlag = (constructionsSite, baseRoom) => {
     if (flagName != -3 && flagName != -10) {
         Game.flags[flagName].memory.energyRequired = constructionsSite.progressTotal;
         Game.flags[flagName].memory.type = "construction";
+        Game.flags[flagName].memory.assignedBase = baseRoom.name;
     }
 };
 addEnergyRequestFlag = (pos, baseRoom, name, type) => {
@@ -126,6 +134,7 @@ addUpgraderFlag = (baseRoom) => {
         let path = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name], { ignoreCreeps: true });
         let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name);
         addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id, energyRequestFlagTypes_1.default.UPGRADER);
+        addSpawnRequest(memory_creep_1.default.UPGRADER, baseRoom);
     }
 };
 initBaseManager = (room) => {

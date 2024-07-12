@@ -6,13 +6,21 @@ import roleBuilder from "./role.builder";
 import MemoryRole from "./memory.creep";
 import roleMiner from "./role.miner";
 import roleHauler from "./role.Hauler";
+import diedCreepManager from "./diedCreepManagment";
 
 
 export function loop():void{
     try {
-        console.log(Game.getObjectById("1bc30772347c388"))
-        initPrototypes()
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
+
+        initPrototypes()
+        for (let i in Game.flags){
+            let flag = Game.flags[i]
+            if(flag.memory.type == "source"){
+                    flag.updateEnergySupplyFlag(flag)
+            }
+        }
+        diedCreepManager()
         baseManager(Game.spawns["Spawn1"].room)
         for(var name in Game.creeps){
             var creep:Creep = Game.creeps[name]

@@ -5,21 +5,32 @@ let initCreepPrototypes;
 initCreepPrototypes = () => {
     Creep.prototype.getEnergy = (creep) => {
         if (!creep.memory.targetId) {
-            if (creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES)) {
-                let resource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-                creep.memory.targetId = resource === null || resource === void 0 ? void 0 : resource.id;
+            if (creep.memory.base) {
+                let sources = Memory.baseManager[creep.memory.base].sources;
+                for (let i of sources) {
+                    let flag = Game.flags[i];
+                    if (flag.memory.energyAvailable) {
+                        if (flag.memory.energyAvailable >= creep.store.getFreeCapacity(RESOURCE_ENERGY)) {
+                            console.log(`flag.memory.energyAvailable ${flag.memory.energyAvailable}`);
+                            creep.memory.targetId = i;
+                            break;
+                        }
+                    }
+                }
             }
         }
         else {
-            let target = Game.getObjectById(creep.memory.targetId);
-            if (target instanceof Resource) {
-                let ret = creep.pickup(target);
-                if (ret = ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
+            let targetFlag = Game.flags[creep.memory.targetId];
+            if (!creep.pos.inRangeTo(targetFlag, 1)) {
+                creep.moveTo(targetFlag);
             }
-            else {
-                delete creep.memory.targetId;
+            let droppedEnergy = targetFlag.pos.lookFor(RESOURCE_ENERGY)[0];
+            if (droppedEnergy) {
+                creep.pickup(droppedEnergy);
+            }
+            let container = targetFlag.pos.lookFor(LOOK_STRUCTURES)[0];
+            if (container instanceof StructureContainer) {
+                creep.withdraw(container, RESOURCE_ENERGY, creep.store.getFreeCapacity(RESOURCE_ENERGY));
             }
         }
         let source = creep.room.find(FIND_SOURCES_ACTIVE)[0];
@@ -38,50 +49,60 @@ initCreepPrototypes = () => {
                     let energyRequest = Memory.baseManager[creep.memory.base].energyRequests;
                     for (let i = 0; i < energyRequest.length; i++) {
                         let flag = Game.flags[energyRequest[i]];
-                        if (flag.memory.energyRequired) {
-                            if (flag.memory.energyRequired > 0) {
-                                creep.memory.targetId = energyRequest[i];
-                                break;
+                        if (flag) {
+                            if (flag.memory.energyRequired) {
+                                if (flag.memory.energyRequired > 0) {
+                                    creep.memory.targetId = energyRequest[i];
+                                    break;
+                                }
                             }
+                        }
+                        else {
                         }
                     }
                 }
             }
             else {
                 let targetFlag = Game.flags[creep.memory.targetId];
-                if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BUILDER) {
-                    if (targetFlag.memory.assignedBuilder) {
-                        let target = Game.getObjectById(targetFlag.memory.assignedBuilder);
-                        if (target instanceof Creep) {
-                            let ret = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
-                            if (ret === ERR_NOT_IN_RANGE) {
-                                creep.moveTo(target);
+                console.log(targetFlag);
+                if (targetFlag) {
+                    if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BUILDER) {
+                        if (targetFlag.memory.assignedBuilder) {
+                            let target = Game.getObjectById(targetFlag.memory.assignedBuilder);
+                            if (target instanceof Creep) {
+                                let ret = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
+                                if (ret === ERR_NOT_IN_RANGE) {
+                                    creep.moveTo(target);
+                                }
+                            }
+                        }
+                    }
+                    if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BASE) {
+                        let target = creep.room.find(FIND_MY_SPAWNS)[0];
+                        if (target) {
+                            creep.moveTo(target);
+                            let carryiedEnergy = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+                            let result = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
+                            if (result === OK) {
+                                if (Game.flags[target.id]) {
+                                    if (Game.flags[target.id].memory.energyAvailable) {
+                                        let energyAvailable = Game.flags[target.id].memory.energyAvailable;
+                                        if (energyAvailable) {
+                                            energyAvailable = energyAvailable - carryiedEnergy;
+                                            Game.flags[target.id].memory.energyAvailable = energyAvailable;
+                                        }
+                                    }
+                                }
+                            }
+                            if (result === ERR_FULL) {
+                                delete creep.memory.targetId;
+                                Game.flags[target.id].memory.energyRequired = 0;
                             }
                         }
                     }
                 }
-                if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BASE) {
-                    let target = creep.room.find(FIND_MY_SPAWNS)[0];
-                    if (target) {
-                        creep.moveTo(target);
-                        let carryiedEnergy = creep.store.getUsedCapacity(RESOURCE_ENERGY);
-                        let result = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
-                        if (result === OK) {
-                            if (Game.flags[target.id]) {
-                                if (Game.flags[target.id].memory.energyAvailable) {
-                                    let energyAvailable = Game.flags[target.id].memory.energyAvailable;
-                                    if (energyAvailable) {
-                                        energyAvailable = energyAvailable - carryiedEnergy;
-                                        Game.flags[target.id].memory.energyAvailable = energyAvailable;
-                                    }
-                                }
-                            }
-                        }
-                        if (result === ERR_FULL) {
-                            delete creep.memory.targetId;
-                            Game.flags[target.id].memory.energyRequired = 0;
-                        }
-                    }
+                else {
+                    delete creep.memory.targetId;
                 }
             }
         }

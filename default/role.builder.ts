@@ -5,6 +5,7 @@ let roleBuilder: {
     run(creep: Creep): void
 }
 
+
 export default roleBuilder = {
     run(creep): void {
         try {
@@ -24,13 +25,23 @@ export default roleBuilder = {
                                 if(!creep.pos.inRangeTo(constructionSite,3)){
                                     creep.moveTo(constructionSite)
                                 }
+                            }else{
+                                console.log(`constructionSite is finished`, flag)
+                                flag.removeConstructionFlag(flag)
+                                delete creep.memory.targetId
+                            }  
+                        }else{
+                            let constructionFlag = creep.room.find(FIND_FLAGS,{filter:{color:COLOR_BROWN}})[0]
+                            if(constructionFlag){
+                                creep.memory.targetId = constructionFlag.name
                             }
-                            
-                        }
-                    
 
+                        }
+                        
+                
                     break;
 
+    
 
                 case `hasNoEnergy`:
                     creep.memory.state = "buildFlag"
@@ -63,7 +74,7 @@ export default roleBuilder = {
                     console.log(`creep ${creep} has the memory state ${creep.memory.state}, this is not defined`)
             }
         } catch (error) {
-            console.log(`error in role.`)
+            console.log(`error in role.builder ${error}`)
         }
     }
 }
