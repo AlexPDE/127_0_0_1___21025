@@ -4,6 +4,7 @@ enum MemoryRole{
     BUILDER = "builder",
     MINER = "miner",
     HAULER = "hauler",
+    SCOUT = "scout"
 }
 
 export default MemoryRole;

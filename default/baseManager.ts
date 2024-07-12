@@ -83,7 +83,6 @@ addBaseFlag = (spawn:StructureSpawn)=>{
 
 }
 
-
 addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
     var sources = room.find(FIND_SOURCES)
     for (let source of sources){
@@ -208,14 +207,30 @@ baseManager = (room:Room) =>{
     let spawnFlag = Game.flags[spawn.id]
     switch(strategy){
         case"initiate":
-            Memory.baseManager[room.name].strategy = "pushToRCL2"
+            Memory.baseManager[room.name].strategy = "waitForInitialCreeps"
+            break;
+
+        case"waitForInitialCreeps":
+            const builder:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.BUILDER)
+            const upgrader:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.UPGRADER)
+            const miner:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.MINER)
+            const hauler:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.HAULER)
+            if (builder.length > 0 && upgrader.length > 0 && miner.length > 0 && hauler.length > 0){
+                Memory.baseManager[room.name].strategy = "pushToRCL2"
+                addSpawnRequest(false,MemoryRole.SCOUT,room)
+            }
+
+            break;
+
         case"pushToRCL2":
             if(room.controller){
                 if(room.controller.level ==2){
+                    
                     Memory.baseManager[room.name].strategy = "planRCL2Base"
                 }
             }
             break;
+
 
         case"planRCL2Base":
             

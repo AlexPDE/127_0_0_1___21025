@@ -180,7 +180,18 @@ baseManager = (room) => {
     let spawnFlag = Game.flags[spawn.id];
     switch (strategy) {
         case "initiate":
-            Memory.baseManager[room.name].strategy = "pushToRCL2";
+            Memory.baseManager[room.name].strategy = "waitForInitialCreeps";
+            break;
+        case "waitForInitialCreeps":
+            const builder = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.BUILDER);
+            const upgrader = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.UPGRADER);
+            const miner = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.MINER);
+            const hauler = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.HAULER);
+            if (builder.length > 0 && upgrader.length > 0 && miner.length > 0 && hauler.length > 0) {
+                Memory.baseManager[room.name].strategy = "pushToRCL2";
+                addSpawnRequest(false, memory_creep_1.default.SCOUT, room);
+            }
+            break;
         case "pushToRCL2":
             if (room.controller) {
                 if (room.controller.level == 2) {
