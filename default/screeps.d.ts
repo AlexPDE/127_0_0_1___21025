@@ -3,7 +3,8 @@ declare global {
         role:string;  
         state?:string;
         targetId?:string;
-        base?:string;
+        base:string;
+        scoutRoom?:string,
     }
 
     interface Memory {
@@ -15,8 +16,21 @@ declare global {
             energyRequests:string[];
             RecquestesSpawns:spawnRequestType[];
             strategy:string;
-           };
-        };
+            exploredRooms:{
+                [key:string]:{
+                    distance?:number
+                    roomType?:string
+                    testMemory?:any
+                }
+            };
+            unexploredRooms:{
+                [key:string]:{
+                    distance?:number
+                }
+            };
+            
+            };
+        }
     }
 
     interface spawnRequestType{

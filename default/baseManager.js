@@ -7,6 +7,7 @@ const role_upgrader_1 = require("./role.upgrader");
 const role_builder_1 = require("./role.builder");
 const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
+const role_scout_1 = require("./role.scout");
 const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 let baseManager;
 let initBaseManager;
@@ -20,6 +21,7 @@ let addUpgraderFlag;
 let removeEnergyRequestFlag;
 let addConstructionFlag;
 let removeConstructionFlag;
+let addRoomToExploration;
 dynamicSpawn = (baseRoom) => {
     let spawning = false;
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
@@ -41,6 +43,9 @@ dynamicSpawn = (baseRoom) => {
                 }
                 if (request[i].role == memory_creep_1.default.UPGRADER && !spawning) {
                     ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_upgrader_1.typeUpgrader);
+                }
+                if (request[i].role == memory_creep_1.default.SCOUT && !spawning) {
+                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_scout_1.typeScout);
                 }
                 if (ret == OK) {
                     spawning = true;
@@ -149,6 +154,8 @@ initBaseManager = (room) => {
                 energyRequests: [Game.spawns["Spawn1"].id],
                 RecquestesSpawns: [],
                 strategy: "initiate",
+                exploredRooms: {},
+                unexploredRooms: {},
             }
         };
         addBaseFlag(Game.spawns["Spawn1"]);
@@ -232,6 +239,14 @@ baseManager = (room) => {
             Memory.baseManager[room.name].strategy = "buildRCL2BaseExtenstions";
             break;
         default: console.log(`strategy set in BaseManager for ${room.name} is not defined: ${strategy}`);
+    }
+    //remote mining decisions------------------------
+    let exploredRooms = Memory.baseManager[room.name].exploredRooms;
+    for (let i in exploredRooms) {
+        if (exploredRooms[i].roomType == "potentialRemoteMine") {
+            console.log("initate remote mine");
+        }
+        console.log(exploredRooms[i]);
     }
 };
 exports.default = baseManager;

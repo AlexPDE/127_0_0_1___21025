@@ -35,6 +35,11 @@ diedCreepManager = () => {
                             delete Memory.creeps[i]
                             break
 
+                        case"scout":
+                            addSpawnRequest(false,"scout",Game.rooms[creepMemory.base])
+                            delete Memory.creeps[i]
+                            break
+
                         default:
                             console.log(`creep has died that has no clarification in diedCreepManagment creepRole: ${creepMemory.role}`)
                     }

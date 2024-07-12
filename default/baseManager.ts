@@ -5,6 +5,7 @@ import { typeUpgrader } from "./role.upgrader";
 import { typeBuilder } from "./role.builder";
 import { typeMiner } from "./role.miner";
 import { typeHauler } from "./role.Hauler";
+import { typeScout } from "./role.scout";
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
 
 let baseManager: Function;
@@ -19,6 +20,7 @@ let addUpgraderFlag:Function;
 let removeEnergyRequestFlag:Function;
 let addConstructionFlag:Function;
 let removeConstructionFlag:Function;
+let addRoomToExploration:Function;
 
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
@@ -41,6 +43,9 @@ dynamicSpawn = (baseRoom:Room) =>{
                 }
                 if(request[i].role == MemoryRole.UPGRADER &&!spawning){
                     ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeUpgrader)
+                }
+                if(request[i].role == MemoryRole.SCOUT &&!spawning){
+                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeScout)
                 }
                 if(ret == OK){
                     spawning = true;
@@ -174,6 +179,8 @@ initBaseManager = (room:Room) =>{
                 energyRequests: [Game.spawns["Spawn1"].id],
                 RecquestesSpawns:[],
                 strategy: "initiate",
+                exploredRooms:{},
+                unexploredRooms: {},
             }
         }
         addBaseFlag(Game.spawns["Spawn1"])
@@ -221,6 +228,8 @@ baseManager = (room:Room) =>{
             }
 
             break;
+
+
 
         case"pushToRCL2":
             if(room.controller){
@@ -277,10 +286,20 @@ baseManager = (room:Room) =>{
 
         default:console.log(`strategy set in BaseManager for ${room.name} is not defined: ${strategy}`)
     }
-}
-    
+    //remote mining decisions------------------------
 
+    let exploredRooms = Memory.baseManager[room.name].exploredRooms
+    for(let i in exploredRooms){
+        if(exploredRooms[i].roomType == "potentialRemoteMine"){
+            console.log("initate remote mine")
+        }
+        console.log(exploredRooms[i])
+    }
+    
+}
 export default baseManager
+
+
 
 
 

@@ -7,6 +7,7 @@ import MemoryRole from "./memory.creep";
 import roleMiner from "./role.miner";
 import roleHauler from "./role.Hauler";
 import diedCreepManager from "./diedCreepManagment";
+import roleScout from "./role.scout";
 
 
 export function loop():void{
@@ -38,6 +39,9 @@ export function loop():void{
             }
             if(creep.memory.role == MemoryRole.HAULER){
                 roleHauler.run(creep)
+            }
+            if(creep.memory.role == MemoryRole.SCOUT){
+                roleScout.run(creep)
             }
 
             //testing Functions here--------------------------

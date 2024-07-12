@@ -10,6 +10,7 @@ const memory_creep_1 = require("./memory.creep");
 const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
 const diedCreepManagment_1 = require("./diedCreepManagment");
+const role_scout_1 = require("./role.scout");
 function loop() {
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
@@ -38,6 +39,9 @@ function loop() {
             }
             if (creep.memory.role == memory_creep_1.default.HAULER) {
                 role_Hauler_1.default.run(creep);
+            }
+            if (creep.memory.role == memory_creep_1.default.SCOUT) {
+                role_scout_1.default.run(creep);
             }
             //testing Functions here--------------------------
         }
