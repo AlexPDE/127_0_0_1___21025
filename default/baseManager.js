@@ -38,6 +38,9 @@ dynamicSpawn = (baseRoom) => {
                 if (ret == OK) {
                     spawning = true;
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
+                    let requiredEnergy = baseRoom.energyCapacityAvailable;
+                    console.log(baseRoom.energyCapacityAvailable, baseRoom.energyAvailable, requiredEnergy);
+                    Game.flags[baseRoom.memory.baseFlagName].memory.energyRequired = requiredEnergy;
                 }
             }
         }
@@ -53,14 +56,20 @@ addSpawnRequest = (type, baseRoom, target) => {
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
     }
 };
-addBaseFlag = (pos) => {
-    pos.createFlag(pos.roomName + " base", COLOR_GREEN);
+addBaseFlag = (spawn) => {
+    let flagName = spawn.pos.createFlag(spawn.id, COLOR_GREEN);
+    if (flagName != -3 && flagName != -10) {
+        Memory.baseManager[spawn.pos.roomName].energyRequests.push(flagName);
+        Game.flags[flagName].memory.type = "base";
+        spawn.room.memory.baseFlagName = flagName;
+    }
 };
 addSourceFlagsForRoom = (room, baseRoom) => {
+    console.log(room);
     var sources = room.find(FIND_SOURCES);
+    console.log(sources);
     for (let source of sources) {
-        let baseFlagName = baseRoom.name + " base";
-        let baseFlag = Game.flags[baseFlagName];
+        let baseFlag = Game.flags[baseRoom.memory.baseFlagName];
         if (baseFlag) {
             let path = source.pos.findPathTo(baseFlag, { ignoreCreeps: true });
             let flagName = room.createFlag(path[0].x, path[0].y, source.id, COLOR_ORANGE);
@@ -88,7 +97,7 @@ removeSourceFlag = (flag, baseRoom) => {
 addConstructionFlag = (constructionsSite, baseRoom) => {
     let flagName = constructionsSite.pos.createFlag(constructionsSite.id, COLOR_BROWN);
     Memory.baseManager[baseRoom.name].energyRequests.push(constructionsSite.id);
-    if (flagName != (-3 || -10)) {
+    if (flagName != -3 && flagName != -10) {
         Game.flags[flagName].memory.energyRequired = constructionsSite.progressTotal;
         Game.flags[flagName].memory.type = "construction";
     }
@@ -123,16 +132,16 @@ initBaseManager = (room) => {
     if (!Memory.baseManager) {
         //initialisation first tick. 
         console.log(`base Memory is initiated, this should only happen on the first tick.`);
-        let baseName = Game.spawns["Spawn1"].room.name;
-        let baseRoom = Game.spawns["Spawn1"].room;
+        let baseName = room.name;
+        let baseRoom = room;
         Memory.baseManager = {
             [baseName]: {
                 sources: [],
-                energyRequests: [],
+                energyRequests: [Game.spawns["Spawn1"].id],
                 RecquestesSpawns: []
             }
         };
-        addBaseFlag(Game.spawns["Spawn1"].pos);
+        addBaseFlag(Game.spawns["Spawn1"]);
         //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
         addSourceFlagsForRoom(baseRoom, baseRoom);
         addUpgraderFlag(room);

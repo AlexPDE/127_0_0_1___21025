@@ -11,6 +11,7 @@ const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
 function loop() {
     try {
+        console.log(Game.getObjectById("1bc30772347c388"));
         (0, prototypesInit_1.default)();
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
         (0, baseManager_1.default)(Game.spawns["Spawn1"].room);

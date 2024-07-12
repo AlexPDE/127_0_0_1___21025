@@ -10,6 +10,7 @@ import roleHauler from "./role.Hauler";
 
 export function loop():void{
     try {
+        console.log(Game.getObjectById("1bc30772347c388"))
         initPrototypes()
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
         baseManager(Game.spawns["Spawn1"].room)

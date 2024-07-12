@@ -1,1 +1,1 @@
-{"version":3,"file":"energyRequestFlagTypes.js","sourceRoot":"","sources":["energyRequestFlagTypes.ts"],"names":[],"mappings":";;AAAA,IAAK,sBAGJ;AAHD,WAAK,sBAAsB;IACvB,0DAAgC,CAAA;IAChC,kDAAwB,CAAA;AAC5B,CAAC,EAHI,sBAAsB,KAAtB,sBAAsB,QAG1B;AAED,kBAAe,sBAAsB,CAAA"}
+{"version":3,"file":"energyRequestFlagTypes.js","sourceRoot":"","sources":["energyRequestFlagTypes.ts"],"names":[],"mappings":";;AAAA,IAAK,sBAIJ;AAJD,WAAK,sBAAsB;IACvB,0DAAgC,CAAA;IAChC,kDAAwB,CAAA;IACxB,uCAAY,CAAA;AAChB,CAAC,EAJI,sBAAsB,KAAtB,sBAAsB,QAI1B;AAED,kBAAe,sBAAsB,CAAA"}

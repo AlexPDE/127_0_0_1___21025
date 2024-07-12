@@ -53,7 +53,7 @@ exports.default = roleMiner = {
 };
 exports.typeMiner = {
     role: "miner",
-    body: [MOVE, WORK, CARRY],
+    body: [MOVE, WORK, WORK],
     name: "Miner" + Game.time,
     state: "justSpawned",
 };
