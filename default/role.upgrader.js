@@ -41,7 +41,8 @@ exports.default = roleUpgrader = {
 };
 exports.typeUpgrader = {
     role: "upgrader",
-    body: [MOVE, WORK, CARRY],
+    baseBody: [MOVE, WORK, CARRY],
+    body: [WORK],
     name: "Upgrader" + Game.time,
     state: "justSpawned",
 };

@@ -38,7 +38,7 @@ initCreepPrototypes= ()=>{
             }
         }
         
-        
+
 
         type source= Source
         let source = creep.room.find(FIND_SOURCES_ACTIVE)[0]
@@ -75,7 +75,6 @@ initCreepPrototypes= ()=>{
                 }
             }else{
                 let targetFlag = Game.flags[creep.memory.targetId]
-                console.log(targetFlag)
                 if(targetFlag){
                     
                     if(targetFlag.memory.type == EnergyRequestFlagTypes.BUILDER){

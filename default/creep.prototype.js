@@ -64,7 +64,6 @@ initCreepPrototypes = () => {
             }
             else {
                 let targetFlag = Game.flags[creep.memory.targetId];
-                console.log(targetFlag);
                 if (targetFlag) {
                     if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BUILDER) {
                         if (targetFlag.memory.assignedBuilder) {

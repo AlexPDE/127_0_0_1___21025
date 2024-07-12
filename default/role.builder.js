@@ -68,7 +68,8 @@ exports.default = roleBuilder = {
 };
 exports.typeBuilder = {
     role: "builder",
-    body: [MOVE, WORK, CARRY, WORK],
+    baseBody: [MOVE, WORK, CARRY],
+    body: [MOVE, WORK],
     name: "Builder " + Game.time,
     state: "justSpawned",
 };

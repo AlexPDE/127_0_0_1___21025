@@ -31,8 +31,9 @@ exports.default = roleHauler = {
 };
 exports.typeHauler = {
     role: "hauler",
+    baseBody: [MOVE, CARRY],
     body: [MOVE, CARRY],
-    name: "Hauler" + Game.time,
+    name: "Hauler",
     state: "justSpawned",
 };
 //# sourceMappingURL=role.Hauler.js.map

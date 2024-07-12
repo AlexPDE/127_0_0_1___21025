@@ -49,7 +49,8 @@ export default roleUpgrader = {
 
 export let typeUpgrader:creepType = {
     role:"upgrader",
-    body:[MOVE,WORK,CARRY],
+    baseBody:[MOVE,WORK,CARRY],
+    body:[WORK],
     name:"Upgrader" + Game.time,
     state:"justSpawned",
 }

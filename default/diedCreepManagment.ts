@@ -14,21 +14,26 @@ diedCreepManager = () => {
                         case"miner":
                             console.log("miner has died")
                             if(creepMemory.base){
-                                addSpawnRequest("miner", Game.rooms[creepMemory.base],creepMemory.targetId)
+                                addSpawnRequest(true,"miner", Game.rooms[creepMemory.base],creepMemory.targetId)
                                 delete Memory.creeps[i]
                             }
                             break;
 
 
                         case"hauler":
-                            addSpawnRequest("hauler",Game.rooms[creepMemory.base])
+                            addSpawnRequest(true,"hauler",Game.rooms[creepMemory.base])
                             delete Memory.creeps[i]
                             break;
 
                         case"builder":
-                            addSpawnRequest("builder",Game.rooms[creepMemory.base])
+                            addSpawnRequest(true,"builder",Game.rooms[creepMemory.base])
                             delete Memory.creeps[i]
                             break;
+
+                        case"upgrader":
+                            addSpawnRequest(false,"upgrader",Game.rooms[creepMemory.base])
+                            delete Memory.creeps[i]
+                            break
 
                         default:
                             console.log(`creep has died that has no clarification in diedCreepManagment creepRole: ${creepMemory.role}`)
@@ -37,6 +42,7 @@ diedCreepManager = () => {
         }
     }
 }
+
 
 
 export default diedCreepManager

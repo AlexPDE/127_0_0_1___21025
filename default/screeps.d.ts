@@ -10,17 +10,20 @@ declare global {
         creeps: {[name:string]: CreepMemory};
         baseManager:{
            [key:string]:{
+            RCL:number;
             sources:string[];
             energyRequests:string[];
             RecquestesSpawns:spawnRequestType[];
+            strategy:string;
            };
         };
     }
 
     interface spawnRequestType{
-        role:string
-        body?:string[]
-        target?:string
+        role:string;
+        body?:string[];
+        target?:string;
+        maxSize:boolean;
     }
 
     interface Base {

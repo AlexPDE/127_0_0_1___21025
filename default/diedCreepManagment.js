@@ -12,16 +12,20 @@ diedCreepManager = () => {
                     case "miner":
                         console.log("miner has died");
                         if (creepMemory.base) {
-                            (0, baseManager_1.addSpawnRequest)("miner", Game.rooms[creepMemory.base], creepMemory.targetId);
+                            (0, baseManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.targetId);
                             delete Memory.creeps[i];
                         }
                         break;
                     case "hauler":
-                        (0, baseManager_1.addSpawnRequest)("hauler", Game.rooms[creepMemory.base]);
+                        (0, baseManager_1.addSpawnRequest)(true, "hauler", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     case "builder":
-                        (0, baseManager_1.addSpawnRequest)("builder", Game.rooms[creepMemory.base]);
+                        (0, baseManager_1.addSpawnRequest)(true, "builder", Game.rooms[creepMemory.base]);
+                        delete Memory.creeps[i];
+                        break;
+                    case "upgrader":
+                        (0, baseManager_1.addSpawnRequest)(false, "upgrader", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     default:
