@@ -31,8 +31,26 @@ declare global {
             
             };
         }
+        analytics:analyticsMemory;
     }
 
+    interface analyticsMemory {
+        energyAvailable:analyticsEntry,
+        energyGain:analyticsEntry,
+        spawnTime:analyticsEntry,
+        sinkBuild:analyticsEntry,
+        sinkSpawn:analyticsEntry,
+        sinkUpgrading:analyticsEntry,
+        sinkRepair:analyticsEntry,
+    }
+    
+    interface analyticsEntry {
+        perTickCurrent:number;
+        past100Ticks:number[];
+        average10Ticks:number;
+        average100Ticks:number;
+    }
+    
     interface spawnRequestType{
         role:string;
         body?:string[];

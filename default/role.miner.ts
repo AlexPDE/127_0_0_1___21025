@@ -1,3 +1,5 @@
+import { addEnergyHarvested } from "./analytics"
+
 let roleMiner: {
     /**
      * @param {Creep} creep
@@ -8,6 +10,12 @@ let roleMiner: {
 export default roleMiner = {
     run(creep): void {
         try {
+            let energyPerTick = 0
+            for (let i of creep.body){
+                if(i.type == WORK ){
+                    energyPerTick = energyPerTick + 2
+                }
+            }
             switch(creep.memory.state){
                 case `justSpawned`:
                     creep.memory.state = "hasNoEnergy"
@@ -30,7 +38,9 @@ export default roleMiner = {
                         var sourceId = creep.memory.targetId
                         let source = Game.getObjectById(sourceId)
                         if(source instanceof Source){
-                            creep.harvest(source)
+                            if(creep.harvest(source) === OK){
+                                addEnergyHarvested(energyPerTick)
+                            }
                         }else{
                             console.log(`miner trys to havest something that i snot a source`)
                         }

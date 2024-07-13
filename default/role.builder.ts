@@ -1,3 +1,5 @@
+import { addSinkBuild } from "./analytics"
+
 let roleBuilder: {
     /**
      * @param {Creep} creep
@@ -9,6 +11,12 @@ let roleBuilder: {
 export default roleBuilder = {
     run(creep): void {
         try {
+            let energyPerTick = 0
+            for (let i of creep.body){
+                if(i.type == WORK ){
+                    energyPerTick = energyPerTick + 5
+                }
+            }
             switch(creep.memory.state){
                 case `justSpawned`:
                     console.log("new creep just spawned")
@@ -22,6 +30,9 @@ export default roleBuilder = {
                             let constructionSite = Game.getObjectById(creep.memory.targetId)
                             if(constructionSite instanceof ConstructionSite){
                                 let ret = creep.build(constructionSite)
+                                if(ret === OK){
+                                    addSinkBuild(energyPerTick)
+                                }
                                 if(!creep.pos.inRangeTo(constructionSite,3)){
                                     creep.moveTo(constructionSite)
                                 }

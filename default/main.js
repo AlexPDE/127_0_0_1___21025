@@ -11,9 +11,11 @@ const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
 const diedCreepManagment_1 = require("./diedCreepManagment");
 const role_scout_1 = require("./role.scout");
+const analytics_1 = require("./analytics");
 function loop() {
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
+        var totalEnergyHarvested = 0;
         (0, prototypesInit_1.default)();
         for (let i in Game.flags) {
             let flag = Game.flags[i];
@@ -23,6 +25,7 @@ function loop() {
         }
         (0, diedCreepManagment_1.default)();
         (0, baseManager_1.default)(Game.spawns["Spawn1"].room);
+        (0, analytics_1.startAnalytics)();
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
             if (creep.memory.role == memory_creep_1.default.HARVESTER) {
@@ -44,6 +47,9 @@ function loop() {
                 role_scout_1.default.run(creep);
             }
             //testing Functions here--------------------------
+            //saving analytics Data
+            (0, analytics_1.calculateAverage)();
+            (0, analytics_1.saveHistory)();
         }
     }
     catch (error) {

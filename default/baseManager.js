@@ -9,6 +9,7 @@ const role_miner_1 = require("./role.miner");
 const role_Hauler_1 = require("./role.Hauler");
 const role_scout_1 = require("./role.scout");
 const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
+const analytics_1 = require("./analytics");
 let baseManager;
 let initBaseManager;
 let addBaseFlag;
@@ -145,6 +146,7 @@ initBaseManager = (room) => {
     if (!Memory.baseManager) {
         //initialisation first tick. 
         console.log(`base Memory is initiated, this should only happen on the first tick.`);
+        (0, analytics_1.initialiseAnalytics)();
         let baseName = room.name;
         let baseRoom = room;
         Memory.baseManager = {

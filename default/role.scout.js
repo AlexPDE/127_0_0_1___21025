@@ -62,7 +62,6 @@ exports.default = roleScout = {
             if (searchRoom == true) {
                 console.log(`Scout has not found an adjacent room to scout, terefore uncheckedRooms will be checked.`);
                 for (let i in Memory.baseManager[creep.memory.base].unexploredRooms) {
-                    console.log("test");
                 }
             }
         }

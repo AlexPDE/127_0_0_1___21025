@@ -7,6 +7,7 @@ import { typeMiner } from "./role.miner";
 import { typeHauler } from "./role.Hauler";
 import { typeScout } from "./role.scout";
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
+import { initialiseAnalytics } from "./analytics";
 
 let baseManager: Function;
 let initBaseManager:Function;
@@ -166,10 +167,12 @@ addUpgraderFlag=(baseRoom:Room)=>{
     }
 }
 
+
 initBaseManager = (room:Room) =>{
     if(!Memory.baseManager){
         //initialisation first tick. 
         console.log(`base Memory is initiated, this should only happen on the first tick.`)
+        initialiseAnalytics()
         let baseName = room.name
         let baseRoom = room
         Memory.baseManager = {

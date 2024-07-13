@@ -8,11 +8,15 @@ import roleMiner from "./role.miner";
 import roleHauler from "./role.Hauler";
 import diedCreepManager from "./diedCreepManagment";
 import roleScout from "./role.scout";
+import { calculateAverage, saveHistory, startAnalytics } from "./analytics";
 
 
 export function loop():void{
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
+         var totalEnergyHarvested = 0
+
+
 
         initPrototypes()
         for (let i in Game.flags){
@@ -23,6 +27,8 @@ export function loop():void{
         }
         diedCreepManager()
         baseManager(Game.spawns["Spawn1"].room)
+
+        startAnalytics()
         for(var name in Game.creeps){
             var creep:Creep = Game.creeps[name]
             if(creep.memory.role == MemoryRole.HARVESTER){
@@ -46,6 +52,9 @@ export function loop():void{
 
             //testing Functions here--------------------------
 
+            //saving analytics Data
+            calculateAverage()
+            saveHistory()
 
         }
     } catch (error) {

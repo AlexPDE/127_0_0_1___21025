@@ -1,10 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeMiner = void 0;
+const analytics_1 = require("./analytics");
 let roleMiner;
 exports.default = roleMiner = {
     run(creep) {
         try {
+            let energyPerTick = 0;
+            for (let i of creep.body) {
+                if (i.type == WORK) {
+                    energyPerTick = energyPerTick + 2;
+                }
+            }
             switch (creep.memory.state) {
                 case `justSpawned`:
                     creep.memory.state = "hasNoEnergy";
@@ -26,7 +33,9 @@ exports.default = roleMiner = {
                         var sourceId = creep.memory.targetId;
                         let source = Game.getObjectById(sourceId);
                         if (source instanceof Source) {
-                            creep.harvest(source);
+                            if (creep.harvest(source) === OK) {
+                                (0, analytics_1.addEnergyHarvested)(energyPerTick);
+                            }
                         }
                         else {
                             console.log(`miner trys to havest something that i snot a source`);

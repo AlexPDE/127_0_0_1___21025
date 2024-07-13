@@ -1,10 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeBuilder = void 0;
+const analytics_1 = require("./analytics");
 let roleBuilder;
 exports.default = roleBuilder = {
     run(creep) {
         try {
+            let energyPerTick = 0;
+            for (let i of creep.body) {
+                if (i.type == WORK) {
+                    energyPerTick = energyPerTick + 5;
+                }
+            }
             switch (creep.memory.state) {
                 case `justSpawned`:
                     console.log("new creep just spawned");
@@ -17,6 +24,9 @@ exports.default = roleBuilder = {
                         let constructionSite = Game.getObjectById(creep.memory.targetId);
                         if (constructionSite instanceof ConstructionSite) {
                             let ret = creep.build(constructionSite);
+                            if (ret === OK) {
+                                (0, analytics_1.addSinkBuild)(energyPerTick);
+                            }
                             if (!creep.pos.inRangeTo(constructionSite, 3)) {
                                 creep.moveTo(constructionSite);
                             }
