@@ -17,10 +17,11 @@ export function loop():void{
     try {
         
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
+        initPrototypes()
         updateAllFlags()
          var totalEnergyHarvested = 0
 
-        initPrototypes()
+        
         for (let i in Game.flags){
             let flag = Game.flags[i]
             if(flag.memory.type == "source"){

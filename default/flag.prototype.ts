@@ -9,14 +9,16 @@ let updateAllFlags:Function
 updateAllFlags = () => {
     console.log("updateAllFlags is running")
     for (let flagName of keys(Game.flags)){
-        switch (Game.flags[flagName].memory.type){
+        let flag = Game.flags[flagName]
+        switch (flag.memory.type){
             case"base": 
+                console.log("flag",flag, flag.memory.type)
+                flag.updateSpawnFlag(flag)
                 break;
 
             default: console.log(`Update all flags is not defined for type: ${Game.flags[flagName].memory.type}`)
         }
     }
-
 }
 
 export {updateAllFlags}
@@ -80,16 +82,22 @@ initFlagPrototypes= ()=>{
     }
 
 
-
     Flag.prototype.updateSpawnFlag = (flag:Flag) =>{
         console.log("updateSpawnFlag is running")
         // check the energy required
         let scheduledDeliverys = flag.memory.scheduledDeliverys
         let eneryOnRoute = 0
-        for (let scheduledDelivery of scheduledDeliverys){
-            eneryOnRoute = eneryOnRoute + scheduledDelivery["amount"]
+        for (let i in scheduledDeliverys){
+            console.log(i)
+            let creep = Game.getObjectById(scheduledDeliverys[i].creepId)
+            if(creep ===null){
+                Game.getObjectById(scheduledDeliverys.splice(i,1)
+            }else{
+                eneryOnRoute = eneryOnRoute + scheduledDeliverys[i]["amount"]
+            }
         }
-        flag.memory.energyRequired = flag.room.energyCapacityAvailable - eneryOnRoute
+        flag.memory.energyRequired = flag.room.energyCapacityAvailable-flag.room?.energyAvailable - eneryOnRoute
+
         //add Extensions to the room 
         if(flag.room){
             let extensions = flag.room.find(FIND_STRUCTURES,{filter: (i) => i.structureType ==STRUCTURE_EXTENSION})

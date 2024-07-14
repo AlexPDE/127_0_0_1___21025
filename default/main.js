@@ -16,9 +16,9 @@ const flag_prototype_1 = require("./flag.prototype");
 function loop() {
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
+        (0, prototypesInit_1.default)();
         (0, flag_prototype_1.updateAllFlags)();
         var totalEnergyHarvested = 0;
-        (0, prototypesInit_1.default)();
         for (let i in Game.flags) {
             let flag = Game.flags[i];
             if (flag.memory.type == "source") {

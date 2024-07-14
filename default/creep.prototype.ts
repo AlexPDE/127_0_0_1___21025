@@ -118,10 +118,10 @@ initCreepPrototypes= ()=>{
 
                     default:
                         console.log(`flag.memory.type in creep prototype is not defined: ${flag.memory.type}`)
-
                 }
                 if(retTransfer === OK){
-                    deleteDeliverySchedule(Game.flags[creep.memory.flagId])
+                    console.log("transfer sucesfull")
+                    deleteDeliverySchedule(Game.flags[creep.memory.flagId],creep.id)
                 }
             }else{
                 // this can happen if for example the build flag is complete or similiar instances 
@@ -131,19 +131,21 @@ initCreepPrototypes= ()=>{
 
         }
     }
+
     deleteDeliverySchedule = (flag:Flag, creepId:string) =>{
         console.log("deleteDeliverySchedule")
-        le  t scheduledDeliverys = flag.memory.scheduledDeliverys
+        let scheduledDeliverys = flag.memory.scheduledDeliverys
         for (let i in scheduledDeliverys){
             console.log(`scheduledDeliverys: ${scheduledDeliverys} , i: ${i} , scheduledDeliverys[i]: ${scheduledDeliverys[i]}`)
+            console.log("scheduledDeliverys[i].creepId")
             if(scheduledDeliverys[i].creepId == creepId){
+                console.log("delivered sucesfully ")
                 scheduledDeliverys.splice(i,1)
             }
         }
     }
 }
    
-    
     export default initCreepPrototypes
 
 //     Creep.prototype.deliverEnergy = (creep:Creep) => {

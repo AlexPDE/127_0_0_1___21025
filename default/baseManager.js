@@ -260,14 +260,17 @@ baseManager = (room) => {
                 const upgrader = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.UPGRADER);
                 const miner = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.MINER);
                 const hauler = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.HAULER);
-                if (miner.length > 0 && hauler.length > 0) {
+                if (miner.length > 1 && hauler.length > 0) {
                     Memory.baseManager[room.name].strategy = "pushToRCL2";
                     addSpawnRequest(false, memory_creep_1.default.SCOUT, room);
                 }
                 break;
             case "pushToRCL2":
                 if (room.controller) {
-                    if (room.controller.level == 2) {
+                    console.log("room.controller.level ", room.controller.level);
+                    if (room.controller.level >= 2) {
+                        let containerPos = new RoomPosition(spawn.pos.x, spawn.pos.y + 1, room.name);
+                        containerPos.createConstructionSite(STRUCTURE_EXTENSION);
                         Memory.baseManager[room.name].strategy = "planRCL2Base";
                     }
                 }
