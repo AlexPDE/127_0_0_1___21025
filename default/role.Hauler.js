@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeHauler = void 0;
 let roleHauler;
 exports.default = roleHauler = {
     run(creep) {
@@ -27,12 +26,5 @@ exports.default = roleHauler = {
             console.log(`error in role.hauler ${error}`);
         }
     }
-};
-exports.typeHauler = {
-    role: "hauler",
-    baseBody: [MOVE, CARRY],
-    body: [MOVE, CARRY],
-    name: "Hauler",
-    state: "justSpawned",
 };
 //# sourceMappingURL=role.Hauler.js.map

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loop = void 0;
-const role_harvester_1 = require("./role.harvester");
 const baseManager_1 = require("./baseManager");
 const prototypesInit_1 = require("./prototypesInit");
 const role_upgrader_1 = require("./role.upgrader");
@@ -30,9 +29,6 @@ function loop() {
         (0, analytics_1.startAnalytics)();
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
-            if (creep.memory.role == memory_creep_1.default.HARVESTER) {
-                role_harvester_1.default.run(creep);
-            }
             if (creep.memory.role == memory_creep_1.default.UPGRADER) {
                 role_upgrader_1.default.run(creep);
             }

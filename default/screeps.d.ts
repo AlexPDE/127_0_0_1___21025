@@ -63,7 +63,7 @@ declare global {
         role:string;
         body?:string[];
         target?:string;
-        maxSize:boolean;
+        maxSize:string;
     }
 
     interface Base {

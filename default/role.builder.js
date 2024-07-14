@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeBuilder = void 0;
 const analytics_1 = require("./analytics");
 let roleBuilder;
 exports.default = roleBuilder = {
@@ -74,12 +73,5 @@ exports.default = roleBuilder = {
             console.log(`error in role.builder ${error}`);
         }
     }
-};
-exports.typeBuilder = {
-    role: "builder",
-    baseBody: [MOVE, WORK, WORK, CARRY],
-    body: [MOVE, WORK],
-    name: "Builder " + Game.time,
-    state: "justSpawned",
 };
 //# sourceMappingURL=role.builder.js.map

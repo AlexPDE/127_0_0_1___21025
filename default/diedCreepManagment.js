@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const baseManager_1 = require("./baseManager");
+const spawnManager_1 = require("./spawnManager");
 let diedCreepManager;
 diedCreepManager = () => {
     for (let i in Memory.creeps) {
@@ -11,24 +11,24 @@ diedCreepManager = () => {
                 switch (creepMemory.role) {
                     case "miner":
                         if (creepMemory.base) {
-                            (0, baseManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.flagId);
+                            (0, spawnManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.flagId);
                             delete Memory.creeps[i];
                         }
                         break;
                     case "hauler":
-                        (0, baseManager_1.addSpawnRequest)(true, "hauler", Game.rooms[creepMemory.base]);
+                        (0, spawnManager_1.addSpawnRequest)(true, "hauler", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     case "builder":
-                        (0, baseManager_1.addSpawnRequest)(true, "builder", Game.rooms[creepMemory.base]);
+                        (0, spawnManager_1.addSpawnRequest)(true, "builder", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     case "upgrader":
-                        (0, baseManager_1.addSpawnRequest)(false, "upgrader", Game.rooms[creepMemory.base]);
+                        (0, spawnManager_1.addSpawnRequest)(false, "upgrader", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     case "scout":
-                        (0, baseManager_1.addSpawnRequest)(false, "scout", Game.rooms[creepMemory.base]);
+                        (0, spawnManager_1.addSpawnRequest)(false, "scout", Game.rooms[creepMemory.base]);
                         delete Memory.creeps[i];
                         break;
                     default:

@@ -35,11 +35,5 @@ export default roleHauler = {
     }
 }
 
-export let typeHauler:creepType = {
-    role:"hauler",
-    baseBody:[MOVE,CARRY],
-    body:[MOVE,CARRY],
-    name:"Hauler",
-    state:"justSpawned",
-}
+
 

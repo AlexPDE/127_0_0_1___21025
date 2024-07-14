@@ -1,15 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addEnergyRequestFlag = exports.addSourceFlagsForRoom = exports.addSpawnRequest = void 0;
+exports.addEnergyRequestFlag = exports.addSourceFlagsForRoom = void 0;
 const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
-const role_upgrader_1 = require("./role.upgrader");
-const role_builder_1 = require("./role.builder");
-const role_miner_1 = require("./role.miner");
-const role_Hauler_1 = require("./role.Hauler");
 const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 const analytics_1 = require("./analytics");
-const creepBodys_1 = require("./creepBodys");
 const spawnManager_1 = require("./spawnManager");
 let baseManager;
 let initBaseManager;
@@ -17,8 +12,6 @@ let addBaseFlag;
 let addSourceFlagsForRoom;
 let removeSourceFlag;
 let addEnergyRequestFlag;
-let addSpawnRequest;
-let dynamicSpawn;
 let addUpgraderFlag;
 let removeEnergyRequestFlag;
 let addConstructionFlag;
@@ -54,51 +47,6 @@ initBaseManager = (room) => {
     }
     else {
         //------------------------------------------this is only for testing puposes--------------------------------------------
-    }
-};
-dynamicSpawn = (baseRoom) => {
-    let spawning = false;
-    let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
-    let i = 0;
-    if (request[0]) {
-        for (i; i < request.length; i++) {
-            if (!spawning) {
-                let spawn = baseRoom.find(FIND_MY_SPAWNS)[0];
-                let ret = -1;
-                if (request[i].role == memory_creep_1.default.MINER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_miner_1.typeMiner, request[i].target);
-                }
-                if (request[i].role == memory_creep_1.default.HAULER && !spawning) {
-                    let a;
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_Hauler_1.typeHauler);
-                }
-                if (request[i].role == memory_creep_1.default.BUILDER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_builder_1.typeBuilder, request[i].target);
-                }
-                if (request[i].role == memory_creep_1.default.UPGRADER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, role_upgrader_1.typeUpgrader);
-                }
-                if (request[i].role == memory_creep_1.default.SCOUT && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeScout);
-                }
-                if (ret == OK) {
-                    spawning = true;
-                    Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
-                    let requiredEnergy = baseRoom.energyCapacityAvailable;
-                    Game.flags[baseRoom.memory.baseFlagName].memory.energyRequired = requiredEnergy;
-                }
-            }
-        }
-    }
-};
-exports.addSpawnRequest = addSpawnRequest = (maxSize, type, baseRoom, target) => {
-    if (target) {
-        let entry = { maxSize: maxSize, role: type, target: target };
-        Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
-    }
-    else {
-        let entry = { maxSize: maxSize, role: type };
-        Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
     }
 };
 addBaseFlag = (pos) => {
@@ -156,8 +104,8 @@ enableMiningFlag = (flag) => {
         if (flag.memory.assignedBase) {
             let baseRoom = Game.rooms[flag.memory.assignedBase];
             console.log(`enable mining for source  ${flag.name}`);
-            addSpawnRequest(true, memory_creep_1.default.MINER, baseRoom, flag.name);
-            addSpawnRequest(false, memory_creep_1.default.HAULER, baseRoom);
+            (0, spawnManager_1.addSpawnRequest)("true", memory_creep_1.default.MINER, baseRoom, flag.name);
+            (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.HAULER, baseRoom);
             Memory.baseManager[baseRoom.name].sources.push(flag.name);
             for (let i = 0; i < Memory.baseManager[baseRoom.name].potentialSources.length; i++) {
                 if (Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name) {
@@ -226,7 +174,7 @@ addUpgraderFlag = (baseRoom) => {
             let path = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name], { ignoreCreeps: true });
             let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name);
             addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id, energyRequestFlagTypes_1.default.UPGRADER);
-            addSpawnRequest(false, memory_creep_1.default.UPGRADER, baseRoom);
+            (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.UPGRADER, baseRoom);
         }
     }
     catch (error) {
@@ -236,7 +184,7 @@ addUpgraderFlag = (baseRoom) => {
 baseManager = (room) => {
     try {
         initBaseManager(room);
-        dynamicSpawn(room);
+        (0, spawnManager_1.dynamicSpawn)(room);
         // ---------------------------------------------- construction Management----------------------------------------------------
         const builder = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.BUILDER);
         let constructionFlag = room.find(FIND_FLAGS, { filter: { color: COLOR_BROWN } })[0];
@@ -244,11 +192,10 @@ baseManager = (room) => {
         if (!constructionFlag && constructionsSite) {
             addConstructionFlag(constructionsSite, room);
             if (builder.length == 0) {
-                addSpawnRequest(true, memory_creep_1.default.BUILDER, room, constructionsSite.id);
+                (0, spawnManager_1.addSpawnRequest)("true", memory_creep_1.default.BUILDER, room, constructionsSite.id);
             }
         }
         //------------------------------------- base stategy -----------------------------------
-        console.log("test1");
         (0, spawnManager_1.spawnManager)(room);
         let strategy = Memory.baseManager[room.name].strategy;
         let spawn = room.find(FIND_MY_SPAWNS)[0];
@@ -265,7 +212,7 @@ baseManager = (room) => {
                 const hauler = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.HAULER);
                 if (miner.length > 1 && hauler.length > 0) {
                     Memory.baseManager[room.name].strategy = "buildOutBaseContainer";
-                    addSpawnRequest(false, memory_creep_1.default.SCOUT, room);
+                    (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.SCOUT, room);
                 }
                 break;
             case "buildOutBaseContainer":
@@ -274,7 +221,7 @@ baseManager = (room) => {
                 let container = containerPos.lookFor(LOOK_STRUCTURES)[0];
                 if (container) {
                     Memory.baseManager[room.name].fastFillerActive = true;
-                    Memory.baseManager[room.name].strategy = "planRCL2Base";
+                    //Memory.baseManager[room.name].strategy = "planRCL2Base"
                 }
                 break;
             case "planRCL2Base":

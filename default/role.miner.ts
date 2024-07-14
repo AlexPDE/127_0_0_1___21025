@@ -73,10 +73,4 @@ export default roleMiner = {
 }
 
     
-export let typeMiner:creepType = {
-    role:"miner",
-    baseBody:[MOVE,WORK,WORK],
-    body:[WORK],
-    name:"Miner" + Game.time,
-    state:"justSpawned",
-}
+

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeUpgrader = void 0;
 const analytics_1 = require("./analytics");
 let roleUpgrader;
 exports.default = roleUpgrader = {
@@ -45,15 +44,8 @@ exports.default = roleUpgrader = {
             }
         }
         catch (error) {
-            console.log(`error in role.harvester`);
+            console.log(`error in role.upgrader`);
         }
     }
-};
-exports.typeUpgrader = {
-    role: "upgrader",
-    baseBody: [MOVE, WORK, CARRY],
-    body: [WORK],
-    name: "Upgrader" + Game.time,
-    state: "justSpawned",
 };
 //# sourceMappingURL=role.upgrader.js.map

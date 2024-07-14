@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeMiner = void 0;
 const analytics_1 = require("./analytics");
 let roleMiner;
 exports.default = roleMiner = {
@@ -60,12 +59,5 @@ exports.default = roleMiner = {
             console.log(`error in role.miner`);
         }
     }
-};
-exports.typeMiner = {
-    role: "miner",
-    baseBody: [MOVE, WORK, WORK],
-    body: [WORK],
-    name: "Miner" + Game.time,
-    state: "justSpawned",
 };
 //# sourceMappingURL=role.miner.js.map

@@ -1,4 +1,3 @@
-import roleHarvester from "./role.harvester";
 import baseManager from "./baseManager";
 import initPrototypes from "./prototypesInit";
 import roleUpgrader from "./role.upgrader";
@@ -33,9 +32,7 @@ export function loop():void{
         startAnalytics()
         for(var name in Game.creeps){
             var creep:Creep = Game.creeps[name]
-            if(creep.memory.role == MemoryRole.HARVESTER){
-                roleHarvester.run(creep)
-            }
+
             if(creep.memory.role == MemoryRole.UPGRADER){
                 roleUpgrader.run(creep)
             }

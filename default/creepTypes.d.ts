@@ -4,6 +4,7 @@ type creepType = {
     body:BodyPartConstant[],
     name:string,
     state:string,
+    max:number,
 }
 
 

@@ -54,15 +54,8 @@ export default roleUpgrader = {
                     console.log(`creep ${creep} has the memory state ${creep.memory.state}, this is not defined`)
             }
         } catch (error) {
-            console.log(`error in role.harvester`)
+            console.log(`error in role.upgrader`)
         }
     }
 }
 
-export let typeUpgrader:creepType = {
-    role:"upgrader",
-    baseBody:[MOVE,WORK,CARRY],
-    body:[WORK],
-    name:"Upgrader" + Game.time,
-    state:"justSpawned",
-}

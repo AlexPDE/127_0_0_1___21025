@@ -1,4 +1,4 @@
-import {addSpawnRequest} from "./baseManager";
+import {addSpawnRequest} from "./spawnManager";
 
 
 
