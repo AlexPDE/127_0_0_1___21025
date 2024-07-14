@@ -72,24 +72,34 @@ initCreepPrototypes= ()=>{
                                             amount:creep.store.getUsedCapacity(RESOURCE_ENERGY)
                                         })
                                     }
+                                    
+                                    if(Game.flags[creep.memory.flagId]){
+
+                                    }else{
+                                        Game.flags[creep.memory.base].updateSpawnFlag(Game.flags[creep.memory.base])
+                                    }
+                                    
                                     break;
                                 }
                             }
                         }else{
-                            try {
-                                let spawn = Game.getObjectById(energyRequests[i])
-                                if(spawn instanceof Spawn){
-                                    flag = Game.flags[spawn.room.name]
-                                    if(flag.memory.energyRequired){
-                                        if(flag.memory.energyRequired>0){
-                                            creep.memory.flagId = spawn.room.name
-                                            break;
-                                        }
-                                    }
-                                }
-                            } catch (error) {
-                                console.log("deliver energy has error in the delivering to base section ", error)
-                            }
+                            // try {
+                            //     let spawn = Game.getObjectById(energyRequests[i])
+                            //     console.log("test1---------------------------------------------------------")
+                            //     if(spawn instanceof Spawn){
+                            //         console.log("test2---------------------------------------------------------")
+                            //         flag = Game.flags[spawn.room.name]
+                            //         if(flag.memory.energyRequired){
+                            //             if(flag.memory.energyRequired>0){
+                            //                 creep.memory.flagId = spawn.room.name
+                            //                 Game.flags[creep.memory.flagId].updateSpawnFlag(Game.flags[creep.memory.flagId])
+                            //                 break;
+                            //             }
+                            //         }
+                            //     }
+                            // } catch (error) {
+                            //     console.log("deliver energy has error in the delivering to base section ", error)
+                            // }
                             
                         }
                         
@@ -123,7 +133,6 @@ initCreepPrototypes= ()=>{
                                         let scheduledDeliveries  = Game.flags[creep.memory.base].memory.scheduledDeliverys
                                         for (let i in scheduledDeliveries){
                                             if((scheduledDeliveries[i].creepId == creep.id) || !Game.getObjectById(scheduledDeliveries[i].creepId)){
-                                                console.log(Game.getObjectById(scheduledDeliveries[i].creepId))      
                                                 Game.flags[creep.memory.base].memory.scheduledDeliverys,Game.flags[creep.memory.base].memory.scheduledDeliverys.splice(i,1)                                       
                                             }
                                         }
