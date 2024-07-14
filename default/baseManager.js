@@ -152,7 +152,6 @@ exports.addSourceFlagsForRoom = addSourceFlagsForRoom = (room, baseRoom, enableM
 };
 enableMiningFlag = (flag) => {
     try {
-        console.log("test1", flag.memory.assignedBase);
         if (flag.memory.assignedBase) {
             let baseRoom = Game.rooms[flag.memory.assignedBase];
             console.log(`enable mining for source  ${flag.name}`);
@@ -161,7 +160,6 @@ enableMiningFlag = (flag) => {
             Memory.baseManager[baseRoom.name].sources.push(flag.name);
             for (let i in Memory.baseManager[baseRoom.name].potentialSources) {
                 if (Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name) {
-                    console.log(i, flag.name);
                     if (Memory.baseManager[baseRoom.name].potentialSources[i]) {
                         Memory.baseManager[baseRoom.name].potentialSources.splice(i, 1);
                     }

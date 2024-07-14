@@ -15,7 +15,6 @@ exports.default = roleScout = {
             }
         }
         else {
-            console.log("scout is running");
             let exits = Game.map.describeExits(creep.room.name);
             let searchRoom = true;
             let targetPos;
@@ -61,7 +60,6 @@ exports.default = roleScout = {
                 searchRoom = false;
             }
             if (searchRoom == true) {
-                console.log(`Scout has not found an adjacent room to scout, terefore uncheckedRooms will be checked.`);
                 for (let i in Memory.baseManager[creep.memory.base].unexploredRooms) {
                 }
             }

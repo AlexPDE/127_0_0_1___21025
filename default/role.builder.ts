@@ -93,7 +93,7 @@ export default roleBuilder = {
 
 export let typeBuilder:creepType = {
     role:"builder",
-    baseBody:[MOVE,WORK,CARRY],
+    baseBody:[MOVE,WORK,WORK,CARRY],
     body:[MOVE,WORK],
     name:"Builder " + Game.time,
     state:"justSpawned",

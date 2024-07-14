@@ -21,7 +21,6 @@ exports.default = roleMiner = {
                         var sourceId = creep.memory.flagId;
                         let flag = Game.flags[sourceId];
                         creep.moveTo(flag);
-                        console.log(flag);
                         if (creep.pos.isEqualTo(Game.flags[sourceId].pos)) {
                             creep.memory.state = "mining";
                         }

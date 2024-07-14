@@ -44,11 +44,14 @@ initFlagPrototypes= ()=>{
             if(requestFlags){
                 for ( let i in requestFlags){
                     if (requestFlags[i] == flag.name){
+                        requestFlags.splice(i,1)
+                        flag.remove()
                     }
                 }
             }
         }
-        flag.remove()
+
+        
     }
 
     Flag.prototype.updateUpgraderFlag = (flag:Flag) =>{
@@ -59,7 +62,7 @@ initFlagPrototypes= ()=>{
     }
 
 
-    
+
     Flag.prototype.updateSpawnFlag = (flag:Flag) =>{
         console.log("updateSpawnFlag is running")
         // check the energy required
@@ -68,10 +71,7 @@ initFlagPrototypes= ()=>{
         for (let scheduledDelivery of scheduledDeliverys){
             eneryOnRoute = eneryOnRoute + scheduledDelivery["amount"]
         }
-        console.log(`energy on route ${eneryOnRoute}`)
-        console.log(flag.memory.energyRequired,flag.room.energyCapacityAvailable,eneryOnRoute)
         flag.memory.energyRequired = flag.room.energyCapacityAvailable - eneryOnRoute
-        console.log(`spawn flag  ${flag.memory.energyRequired}`)
         //add Extensions to the room 
         if(flag.room){
             let extensions = flag.room.find(FIND_STRUCTURES,{filter: (i) => i.structureType ==STRUCTURE_EXTENSION})
