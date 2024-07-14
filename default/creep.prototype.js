@@ -45,36 +45,49 @@ initCreepPrototypes = () => {
     Creep.prototype.deliverEnergy = (creep) => {
         try {
             if (!creep.memory.targetId) {
+                console.log("deciding where to deliver Energy");
                 if (creep.memory.base) {
-                    console.log("test1");
+                    console.log("wants to deliver to Base");
                     let energyRequests = [];
                     for (let i in Memory.baseManager[creep.memory.base].energyRequests) {
-                        console.log("test2");
                         //energyRequests.pushMemory.baseManager[creep.memory.base].energyRequests[i]
                     }
-                    energyRequests.push(creep.room.find(FIND_MY_SPAWNS)[0].id);
-                    console.log(energyRequests);
+                    energyRequests.push(Game.rooms[creep.memory.base].find(FIND_MY_SPAWNS)[0].id);
                     for (let i = 0; i < energyRequests.length; i++) {
-                        let flag = Game.flags[energyRequests[i]];
+                        console.log(`checking delivery Option ${energyRequests[i]}`);
+                        let flag = Game.flags[creep.memory.base];
                         if (flag) {
                             if (flag.memory.energyRequired) {
                                 if (flag.memory.energyRequired > 0) {
+                                    console.log("energy is required ad delivery Option");
                                     creep.memory.targetId = energyRequests[i];
+                                    console.log("creep will deliver to Base");
+                                    if (flag.memory.scheduledDeliverys) {
+                                        console.log(`this are the curred schedule deliveries ${flag.memory.scheduledDeliverys}`);
+                                        flag.memory.scheduledDeliverys.push({
+                                            creepId: "test",
+                                            amount: 10.
+                                        });
+                                    }
                                     break;
                                 }
                             }
                         }
                         else {
-                            let spawn = Game.getObjectById(energyRequests[i]);
-                            console.log(`spawn ${spawn}`);
-                            if (spawn instanceof Spawn) {
-                                flag = Game.flags[spawn.room.name];
-                                if (flag.memory.energyRequired) {
-                                    if (flag.memory.energyRequired > 0) {
-                                        creep.memory.targetId = spawn.room.name;
-                                        break;
+                            try {
+                                let spawn = Game.getObjectById(energyRequests[i]);
+                                if (spawn instanceof Spawn) {
+                                    flag = Game.flags[spawn.room.name];
+                                    if (flag.memory.energyRequired) {
+                                        if (flag.memory.energyRequired > 0) {
+                                            creep.memory.targetId = spawn.room.name;
+                                            break;
+                                        }
                                     }
                                 }
+                            }
+                            catch (error) {
+                                console.log("deliver energy has error in the delivering to base section ", error);
                             }
                         }
                     }
@@ -83,6 +96,7 @@ initCreepPrototypes = () => {
             else {
                 let targetFlag = Game.flags[creep.memory.targetId];
                 if (targetFlag) {
+                    console.log(targetFlag);
                     if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BUILDER) {
                         if (targetFlag.memory.assignedBuilder) {
                             let target = Game.getObjectById(targetFlag.memory.assignedBuilder);
@@ -94,30 +108,69 @@ initCreepPrototypes = () => {
                             }
                         }
                     }
-                    if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BASE) {
-                        let target = creep.room.find(FIND_MY_SPAWNS)[0];
+                }
+                else {
+                    console.log("this is testinf the delivery to base");
+                    let target = Game.getObjectById(creep.memory.targetId).pos.lookFor(LOOK_STRUCTURES)[0];
+                    try {
+                        let target = Game.getObjectById(creep.memory.targetId);
+                        console.log("creep is targeting this for the delivery ", target);
                         if (target) {
                             creep.moveTo(target);
                             let carryiedEnergy = creep.store.getUsedCapacity(RESOURCE_ENERGY);
                             let result = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
                             if (result === OK) {
-                                if (Game.flags[target.id]) {
-                                    if (Game.flags[target.id].memory.energyAvailable) {
-                                        let energyAvailable = Game.flags[target.id].memory.energyAvailable;
+                                if (Game.flags[creep.room.name]) {
+                                    if (Game.flags[creep.room.name].memory.energyAvailable) {
+                                        let energyAvailable = Game.flags[creep.room.name].memory.energyAvailable;
                                         if (energyAvailable) {
                                             energyAvailable = energyAvailable - carryiedEnergy;
-                                            Game.flags[target.id].memory.energyAvailable = energyAvailable;
+                                            Game.flags[creep.room.name].memory.energyAvailable = energyAvailable;
                                         }
                                     }
                                 }
+                                if (result === ERR_FULL) {
+                                    delete creep.memory.targetId;
+                                }
                             }
-                            if (result === ERR_FULL) {
-                                delete creep.memory.targetId;
+                        }
+                        try { }
+                        catch (error) {
+                            console.log("error in deliver Energy section base");
+                        }
+                    }
+                    finally {
+                    }
+                    if (targetFlag.memory.type == energyRequestFlagTypes_1.default.BASE) {
+                        try {
+                            let target = targetFlag.pos.lookFor(LOOK_STRUCTURES)[0];
+                            console.log("creep is targeting this for the delivery ", target);
+                            if (target) {
+                                creep.moveTo(target);
+                                let carryiedEnergy = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+                                let result = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
+                                if (result === OK) {
+                                    if (Game.flags[target.id]) {
+                                        if (Game.flags[target.id].memory.energyAvailable) {
+                                            let energyAvailable = Game.flags[target.id].memory.energyAvailable;
+                                            if (energyAvailable) {
+                                                energyAvailable = energyAvailable - carryiedEnergy;
+                                                Game.flags[target.id].memory.energyAvailable = energyAvailable;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (result === ERR_FULL) {
+                                    delete creep.memory.targetId;
+                                }
                             }
+                        }
+                        catch (error) {
+                            console.log("error in deliver Energy section base");
                         }
                     }
                 }
-                else {
+                {
                     delete creep.memory.targetId;
                 }
             }

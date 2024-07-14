@@ -25,7 +25,9 @@ export default roleMiner = {
                 case `hasNoEnergy`:
                     if(creep.memory.targetId){
                         var sourceId = creep.memory.targetId
-                        creep.moveTo(Game.flags[sourceId].pos.x,Game.flags[sourceId].pos.y,)
+                        let flag = Game.flags[sourceId]
+                        creep.moveTo(flag)
+                        console.log(flag)
                         if(creep.pos.isEqualTo(Game.flags[sourceId].pos)){
                             creep.memory.state = "mining"
                         }

@@ -25,6 +25,35 @@ let addRoomToExploration:Function;
 let enableMiningFlag: Function;
 let estimateResourcesRequired:Function;
 
+initBaseManager = (room:Room) =>{
+    if(!Memory.baseManager){
+        //initialisation first tick. 
+        console.log(`base Memory is initiated, this should only happen on the first tick.`)
+        initialiseAnalytics()
+        let baseName = room.name
+        let baseRoom = room
+        Memory.baseManager = {
+            [baseName]:{
+                RCL:1,
+                sources: [],
+                potentialSources: [],
+                energyRequests: [],
+                RecquestesSpawns:[],
+                strategy: "initiate",
+                imidiateGoal: "expandSources",
+                exploredRooms:{},
+                unexploredRooms: {},
+            }
+        }
+        addBaseFlag(Game.spawns["Spawn1"].pos)
+        //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
+        addSourceFlagsForRoom(baseRoom,baseRoom,true)
+        addUpgraderFlag(room)
+    }else{
+        //------------------------------------------this is only for testing puposes--------------------------------------------
+    }
+ }
+
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
     let request = Memory.baseManager[baseRoom.name].RecquestesSpawns
@@ -96,6 +125,7 @@ addBaseFlag = (pos:RoomPosition)=>{
    
 }
 
+
 addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
     console.log("addSourceFlagsForRoom is running")
     var sources = room.find(FIND_SOURCES)
@@ -104,34 +134,53 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
         let baseFlag = Game.flags[baseRoom.name]
         if(baseFlag){
             let path:PathStep[] = source.pos.findPathTo(baseFlag,{ignoreCreeps:true})
+            let roomsToTravers = Game.map.findRoute(baseRoom, room)
+            let numbRoomsToTravers = 0 
+            if(roomsToTravers instanceof Array){
+                numbRoomsToTravers = roomsToTravers.length
+            }
             let flagName = room.createFlag(path[0].x,path[0].y,source.id, COLOR_ORANGE)
+
             if((flagName!= -3 && -10)&&Memory.baseManager){
                 let flag = Game.flags[flagName]
                 flag.memory.type = "source"
-                flag.memory.distanceToBase = path.length
+                flag.memory.distanceToBase =numbRoomsToTravers*50 + path.length
                 flag.memory.estimatedCPUUsage = 5
-                flag.memory.estimatedEnergyUsage = 500/1500
+                flag.memory.estimatedEnergyUsage = 1500/1500
                 flag.memory.estimatedSpawnUsage = 15/1500
+                flag.memory.assignedBase = baseRoom.name
                 Memory.baseManager[baseRoom.name].potentialSources.push(flag.name)
                 if(enableMining){
-                    enableMiningFlag(flag,baseRoom)
+                    enableMiningFlag(flag)
                 }
             }
         }
     }	
 }
 
-
-
 export {addSourceFlagsForRoom}
 
-enableMiningFlag = (flag:Flag,baseRoom:Room) =>{
+
+enableMiningFlag = (flag:Flag) =>{
     try {
-        console.log(`enable mining for source  ${flag.name}`)
-        addSpawnRequest(true,MemoryRole.MINER,baseRoom,flag.name)
-        addSpawnRequest(false,MemoryRole.HAULER,baseRoom)
-        Memory.baseManager[baseRoom.name].sources.push(flag.name)
-        flag.memory.type = "source"
+        console.log("test1",flag.memory.assignedBase)
+        if(flag.memory.assignedBase){
+            let baseRoom = Game.rooms[flag.memory.assignedBase]
+            console.log(`enable mining for source  ${flag.name}`)
+            addSpawnRequest(true,MemoryRole.MINER,baseRoom,flag.name)
+            addSpawnRequest(false,MemoryRole.HAULER,baseRoom)
+            Memory.baseManager[baseRoom.name].sources.push(flag.name)
+            for (let i in Memory.baseManager[baseRoom.name].potentialSources){
+                if(Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name){
+                    console.log(i,flag.name)
+
+                    Memory.baseManager[baseRoom.name].potentialSources.splice(i,1)
+                }
+            }
+            flag.memory.type = "source"
+        }
+        
+       
     } catch (error) {
         console.log(`error in enableMininfFlag`)
     }    
@@ -160,6 +209,7 @@ addConstructionFlag = (constructionsSite: ConstructionSite,baseRoom:Room) =>{
         Game.flags[flagName].memory.estimatedCPUUsage = 0
         Game.flags[flagName].memory.estimatedEnergyUsage = 0 
         Game.flags[flagName].memory.estimatedSpawnUsage = 0 
+        Game.flags[flagName].memory.scheduledDeliverys = []
     }
 }
 
@@ -174,6 +224,7 @@ addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)
         flag.memory.estimatedCPUUsage = 0
         flag.memory.estimatedEnergyUsage = 0
         flag.memory.estimatedSpawnUsage = 0
+        Game.flags[flagName].memory.scheduledDeliverys = []
         Memory.baseManager[baseRoom.name].energyRequests.push(name)
     }
 }
@@ -206,34 +257,7 @@ addUpgraderFlag=(baseRoom:Room)=>{
     
 }
 
-initBaseManager = (room:Room) =>{
-    if(!Memory.baseManager){
-        //initialisation first tick. 
-        console.log(`base Memory is initiated, this should only happen on the first tick.`)
-        initialiseAnalytics()
-        let baseName = room.name
-        let baseRoom = room
-        Memory.baseManager = {
-            [baseName]:{
-                RCL:1,
-                sources: [],
-                potentialSources: [],
-                energyRequests: [],
-                RecquestesSpawns:[],
-                strategy: "initiate",
-                imidiateGoal: "expandSources",
-                exploredRooms:{},
-                unexploredRooms: {},
-            }
-        }
-        addBaseFlag(Game.spawns["Spawn1"].pos)
-        //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
-        addSourceFlagsForRoom(baseRoom,baseRoom,true)
-        addUpgraderFlag(room)
-    }else{
-        //------------------------------------------this is only for testing puposes--------------------------------------------
-    }
- }
+
 
 
 baseManager = (room:Room) =>{
@@ -302,6 +326,7 @@ try {
             if(spawn.room.energyCapacityAvailable == 550){
                 Memory.baseManager[room.name].strategy = "planRCL2UpgraderContainer"
             }
+           
             spawnFlag.updateSpawnFlag(spawnFlag)
             
             break;
@@ -332,16 +357,31 @@ try {
     switch(Memory.baseManager[room.name].imidiateGoal){
         case "expandSources":
             let isRequestingMiner = false
-            for(let i in Memory.baseManager[room.name].potentialSources){
-
+            let minDistance = 151
+            let closestFlag = "noCloseFlagFound"
+            for(let sourceId of Memory.baseManager[room.name].potentialSources){
+                let distanceToBase = Game.flags[sourceId].memory.distanceToBase
+                if (distanceToBase){
+                    if(minDistance > distanceToBase){
+                        minDistance = distanceToBase;
+                        closestFlag = sourceId
+                    }
+                }
             }
+            if(closestFlag !="noCloseFlagFound"){
+                if(Game.flags[closestFlag]){
+                    console.log(`the closest Source Flag ${Game.flags[closestFlag]} in room ${Game.flags[closestFlag].room  } will be enabled for mining`)
+                    enableMiningFlag(Game.flags[closestFlag])
+                }
+            }
+            Memory.baseManager[room.name].imidiateGoal = "evaluate"
             break;
+    
             
         default: 
         console.log(`base manager has an imidiate goal that is undefined ${Memory.baseManager[room.name].imidiateGoal}`)
     }
     Memory.baseManager[room.name].RecquestesSpawns
-
 
     //evaluation how much energy is used------------------------
     let estimeteResourcesNow = estimateResourcesRequired(room)
@@ -364,7 +404,7 @@ try {
         }
     }
     console.log(`CPU Estimation: ${estimeteResourcesNow[0]} cpuLimiting ${cpuLimiting} ||EnergyRequired Estimation: ${estimeteResourcesNow[1]} energyLimiting ${energyLimiting} ||Spawn time Estimation: ${estimeteResourcesNow[2]} spawnLimiting ${spawnLimiting}`)
-    if(!cpuLimiting && !energyLimiting && !spawnLimiting){
+    if(!(cpuLimiting) && !(energyLimiting) && !(spawnLimiting)){
         console.log(`botResources are not limitting. therefore expend mining operation`)
         Memory.baseManager[room.name].imidiateGoal = "expandSources"
     }
@@ -408,7 +448,7 @@ estimateResourcesRequired=(room:Room): [Number, Number, Number] =>{
     //console.log(`totalEstimatedCPUUsage ${totalEstimatedCPUUsage}`)
     //console.log(`totalEstimatedEnergyUsage ${totalEstimatedEnergyUsage}`)  
     //console.log(`totalEstimatedSpawnUsage ${totalEstimatedSpawnUsage}`)        
-    return [totalEstimatedCPUUsage/Game.cpu.limit,totalEstimatedEnergyUsage,totalEstimatedSpawnUsage]  
+    return [totalEstimatedCPUUsage/Game.cpu.limit,totalEstimatedEnergyUsage/Memory.analytics.energyGain.average100Ticks,totalEstimatedSpawnUsage]  
 }
 
 

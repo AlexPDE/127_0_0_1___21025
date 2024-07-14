@@ -56,6 +56,7 @@ function loop() {
         let CPUBeforAnalytics = Game.cpu.getUsed();
         (0, analytics_1.calculateAverage)();
         let CPUAfterAnalytics = Game.cpu.getUsed();
+        console.log(`Game.cpu.getUsed(): ${Game.cpu.getUsed()}`);
     }
     catch (error) {
         console.log(`mn loop ran into ${error}`);
