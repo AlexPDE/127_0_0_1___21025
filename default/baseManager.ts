@@ -43,6 +43,7 @@ initBaseManager = (room:Room) =>{
                 imidiateGoal: "expandSources",
                 exploredRooms:{},
                 unexploredRooms: {},
+                fastFillerActive:false,
             }
         }
         addBaseFlag(Game.spawns["Spawn1"].pos)
@@ -89,7 +90,6 @@ dynamicSpawn = (baseRoom:Room) =>{
         }   
     }
 }   
-
 
 
 addSpawnRequest = (maxSize:boolean, type: string,baseRoom:Room,target?:string) =>{
@@ -289,40 +289,42 @@ try {
             const miner:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.MINER)
             const hauler:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.HAULER)
             if (miner.length > 1 && hauler.length > 0){
-                Memory.baseManager[room.name].strategy = "pushToRCL2"
+                Memory.baseManager[room.name].strategy = "buildOutBaseContainer"
                 addSpawnRequest(false,MemoryRole.SCOUT,room)
             }
             break;
 
-            
-        case"pushToRCL2":
-            if(room.controller){
-                console.log("room.controller.level ", room.controller.level )
-                if(room.controller.level >=2){
-                    let containerPos = new RoomPosition(spawn.pos.x, spawn.pos.y+1, room.name)
-                    containerPos.createConstructionSite(STRUCTURE_EXTENSION)
-                    Memory.baseManager[room.name].strategy = "planRCL2Base"
-                }
+
+        case"buildOutBaseContainer":
+
+            let containerPos = new RoomPosition(spawn.pos.x, spawn.pos.y+1, room.name)
+            containerPos.createConstructionSite(STRUCTURE_CONTAINER)
+            let container = containerPos.lookFor(LOOK_STRUCTURES)[0]
+            if(container){
+                Memory.baseManager[room.name].fastFillerActive = true
+                Memory.baseManager[room.name].strategy = "planRCL2Base"
             }
+            
+
             break;
 
         case"planRCL2Base":
             let extensionPos: RoomPosition
-            extensionPos = new RoomPosition(spawn.pos.x +1, spawn.pos.y, room.name)
+            extensionPos = new RoomPosition(spawn.pos.x, spawn.pos.y-1, room.name)
             extensionPos.createConstructionSite(STRUCTURE_EXTENSION)
-            extensionPos = new RoomPosition(spawn.pos.x +2, spawn.pos.y, room.name)
+            extensionPos = new RoomPosition(spawn.pos.x +1, spawn.pos.y-1, room.name)
             extensionPos.createConstructionSite(STRUCTURE_EXTENSION)
-            extensionPos = new RoomPosition(spawn.pos.x +3, spawn.pos.y, room.name)
+            extensionPos = new RoomPosition(spawn.pos.x +1, spawn.pos.y+1, room.name)
             extensionPos.createConstructionSite(STRUCTURE_EXTENSION)
-            extensionPos = new RoomPosition(spawn.pos.x +4, spawn.pos.y, room.name)
+            extensionPos = new RoomPosition(spawn.pos.x , spawn.pos.y+2, room.name)
             extensionPos.createConstructionSite(STRUCTURE_EXTENSION)
-            extensionPos = new RoomPosition(spawn.pos.x +5, spawn.pos.y, room.name)
+            extensionPos = new RoomPosition(spawn.pos.x +1, spawn.pos.y+3, room.name)
             extensionPos.createConstructionSite(STRUCTURE_EXTENSION)
             Memory.baseManager[room.name].strategy = "buildRCL2BaseExtenstions"
             break;
 
         case"buildRCL2BaseExtenstions":
-            if(spawn.room.energyCapacityAvailable == 550){
+            if(spawn.room.energyCapacityAvailable >= 550){
                 Memory.baseManager[room.name].strategy = "planRCL2UpgraderContainer"
             }
            

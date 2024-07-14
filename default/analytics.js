@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateAverage = exports.startAnalytics = exports.addSinkBuild = exports.genericAnalyticsCalculations = exports.addEnergyHarvested = exports.initialiseAnalytics = void 0;
+exports.calculateAverage = exports.startAnalytics = exports.addSinkUpgrading = exports.addSinkBuild = exports.genericAnalyticsCalculations = exports.addEnergyHarvested = exports.initialiseAnalytics = void 0;
 const lodash_1 = require("lodash");
 let initialiseAnalytics = () => {
     let analyticsEntryPreSet = {
@@ -45,6 +45,10 @@ let addSinkBuild = (amount) => {
     Memory.analytics.sinkBuild.perTickCurrent = Memory.analytics.sinkBuild.perTickCurrent + amount;
 };
 exports.addSinkBuild = addSinkBuild;
+let addSinkUpgrading = (amount) => {
+    Memory.analytics.sinkUpgrading.perTickCurrent = Memory.analytics.sinkUpgrading.perTickCurrent + amount;
+};
+exports.addSinkUpgrading = addSinkUpgrading;
 let startAnalytics = () => {
     let i;
     for (i in Memory.analytics) {

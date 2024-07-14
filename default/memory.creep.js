@@ -8,6 +8,7 @@ var MemoryRole;
     MemoryRole["MINER"] = "miner";
     MemoryRole["HAULER"] = "hauler";
     MemoryRole["SCOUT"] = "scout";
+    MemoryRole["FASTFILLER"] = "fastFiller";
 })(MemoryRole || (MemoryRole = {}));
 exports.default = MemoryRole;
 //# sourceMappingURL=memory.creep.js.map

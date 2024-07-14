@@ -1,3 +1,5 @@
+import { addSinkUpgrading } from "./analytics"
+
 let roleUpgrader: {
     /**
      * @param {Creep} creep
@@ -8,6 +10,13 @@ let roleUpgrader: {
 export default roleUpgrader = {
     run(creep): void {
         try {
+            let energyPerTick = 0
+            for (let i of creep.body){
+                if(i.type == WORK ){
+                    energyPerTick = energyPerTick + 1
+                }
+            }
+
             switch(creep.memory.state){
                 case `justSpawned`:
                     console.log("new creep just spawned")
@@ -29,8 +38,12 @@ export default roleUpgrader = {
                     type controller = StructureController
                     let controller = creep.room.controller
                     if (controller){
-                        if(creep.upgradeController(controller)===ERR_NOT_IN_RANGE){
+                        let RetUpgrade = creep.upgradeController(controller)
+                        if(RetUpgrade===ERR_NOT_IN_RANGE){
                             creep.moveTo(controller)
+                        }
+                        if(RetUpgrade===OK){
+                            addSinkUpgrading(energyPerTick)
                         }
                     }
                     if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){

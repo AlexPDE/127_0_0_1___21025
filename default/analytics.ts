@@ -49,6 +49,10 @@ export let addSinkBuild:Function = (amount:number) =>{
     Memory.analytics.sinkBuild.perTickCurrent = Memory.analytics.sinkBuild.perTickCurrent + amount
 }
 
+export let addSinkUpgrading:Function = (amount:number) =>{
+    Memory.analytics.sinkUpgrading.perTickCurrent = Memory.analytics.sinkUpgrading.perTickCurrent + amount
+}
+
 export let startAnalytics:Function = () =>{
     let i:keyof typeof Memory.analytics
     for( i in Memory.analytics){

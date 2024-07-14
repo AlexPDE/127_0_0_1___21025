@@ -1,7 +1,16 @@
+- fast filler
+
 - Priority spawning
 
 - dynamic body size
 
-- remove spawning of harvesters from source and implement dynamic spawning absed on resources available at source and sink total rate
-
 - deduction of scheduled pick Ups from energy available
+
+- remove spawning of hauler from source and implement dynamic spawning absed on resources available at source and sink total rate
+    -implement tracker for all lost Resources in visible world on source flags. Base decision if hauler needs to be spaned on this
+
+
+
+- fix bug that scout gets stuck in own room. Probably solution possibly to add room to explored during inititation
+    further develop scout logic that near by rooms get scouted with higher prio
+

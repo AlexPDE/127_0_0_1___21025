@@ -13,6 +13,7 @@ declare global {
         baseManager:{
            [key:string]:{
             RCL:number;
+            fastFillerActive:boolean
             sources:string[];
             potentialSources:string[];
             energyRequests:string[];

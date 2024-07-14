@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 let initCreepPrototypes;
 let deleteDeliverySchedule;
+let deliverToBase;
 initCreepPrototypes = () => {
     Creep.prototype.getEnergy = (creep) => {
         if (!creep.memory.flagId) {
@@ -42,9 +43,6 @@ initCreepPrototypes = () => {
         }
     };
     Creep.prototype.deliverEnergy = (creep) => {
-        let deliverToBase = false;
-        let deliverToContainer = false;
-        let deliverToCreep = false;
         // no target selected therefore choosing where to deliver to.
         if (!creep.memory.flagId) {
             console.log(`creep.memory.flagId ${creep.memory.flagId}`);
@@ -59,33 +57,38 @@ initCreepPrototypes = () => {
             for (let i in energyRequests) {
                 console.log("energyRequests:", energyRequests);
                 let flag = Game.flags[energyRequests[i]];
-                if (flag.memory.energyRequired > 0) {
-                    if (flag.memory.type == "base") {
-                        creep.memory.targetId = flag.pos.lookFor(LOOK_STRUCTURES)[0].id;
-                        creep.memory.flagId = flag.name;
-                        console.log(`creep.memory.flagId ${creep.memory.flagId}`);
+                if (flag.memory.energyRequired) {
+                    if (flag.memory.energyRequired > 0) {
+                        if (flag.memory.type == "base") {
+                            creep.memory.targetId = flag.pos.lookFor(LOOK_STRUCTURES)[0].id;
+                            creep.memory.flagId = flag.name;
+                            console.log(`creep.memory.flagId ${creep.memory.flagId}`);
+                        }
+                        else {
+                            creep.memory.flagId = flag.name;
+                        }
+                        // adding the delivery to scheduled deliveries
+                        if (flag.memory.scheduledDeliverys) {
+                            flag.memory.scheduledDeliverys.push({
+                                creepId: creep.id,
+                                amount: creep.store.getUsedCapacity(RESOURCE_ENERGY)
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        creep.memory.flagId = flag.name;
-                    }
-                    // adding the delivery to scheduled deliveries
-                    flag.memory.scheduledDeliverys.push({
-                        creepId: creep.id,
-                        amount: creep.store.getUsedCapacity(RESOURCE_ENERGY)
-                    });
-                    break;
                 }
             }
         }
         else {
             // there is a target defined now we need to deliver to it
             let flag = Game.flags[creep.memory.flagId];
-            console.log("flag", flag);
             if (flag) {
                 let retTransfer;
                 switch (flag.memory.type) {
                     case "base":
-                        let target = Game.getObjectById(creep.memory.targetId);
+                        console.log("test1");
+                        let target = deliverToBase(creep);
+                        console.log("test2");
                         creep.moveTo(target);
                         retTransfer = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
                         break;
@@ -94,14 +97,21 @@ initCreepPrototypes = () => {
                         if (targetFlag.memory.assignedBuilder) {
                             let target = Game.getObjectById(targetFlag.memory.assignedBuilder);
                             if (target instanceof Creep) {
-                                let ret = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
-                                if (ret === ERR_NOT_IN_RANGE) {
+                                retTransfer = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
+                                if (retTransfer === ERR_NOT_IN_RANGE) {
                                     creep.moveTo(target);
                                 }
                             }
+                            else {
+                                retTransfer = ERR_BUSY;
+                            }
+                        }
+                        else {
+                            retTransfer = ERR_BUSY;
                         }
                         break;
                     default:
+                        retTransfer = ERR_BUSY;
                         console.log(`flag.memory.type in creep prototype is not defined: ${flag.memory.type}`);
                 }
                 if (retTransfer === OK) {
@@ -114,6 +124,22 @@ initCreepPrototypes = () => {
                 console.log("test1");
                 delete creep.memory.flagId;
             }
+        }
+    };
+    deliverToBase = (creep) => {
+        console.log("test3", creep);
+        console.log("function deliver to Base is active ", creep.memory);
+        if (Memory.baseManager[creep.memory.base].fastFillerActive) {
+            console.log("test5");
+            let flag = Game.flags[creep.memory.flagId];
+            console.log("test 6 ", flag);
+            let containerPos = new RoomPosition(flag.pos.x, flag.pos.y + 1, flag.room.name);
+            let container = containerPos.lookFor(LOOK_STRUCTURES)[0];
+            console.log(container);
+            return container;
+        }
+        else {
+            return Game.getObjectById(Game.creeps[creep.name].memory.targetId);
         }
     };
     deleteDeliverySchedule = (flag, creepId) => {
