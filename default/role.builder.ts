@@ -20,7 +20,6 @@ export default roleBuilder = {
             
             switch(creep.memory.state){
                 case `justSpawned`:
-                    console.log("new creep just spawned")
                     creep.memory.state = "buildFlag"
                     break;
 

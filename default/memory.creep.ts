@@ -4,8 +4,8 @@ enum MemoryRole{
     BUILDER = "builder",
     MINER = "miner",
     HAULER = "hauler",
-    SCOUT = "scout"
-    FASTFILLER = "fastFiller"
+    SCOUT = "scout",
+    FASTFILLER = "fastFiller",
 }
 
 

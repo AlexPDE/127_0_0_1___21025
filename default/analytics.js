@@ -94,7 +94,7 @@ let calculateAverage = () => {
         }
     }
     catch (error) {
-        console.log("error in calculate averages");
+        console.log(`error in calculate averages`);
     }
 };
 exports.calculateAverage = calculateAverage;

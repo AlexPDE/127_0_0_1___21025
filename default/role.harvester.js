@@ -7,7 +7,6 @@ exports.default = roleHarvester = {
         try {
             switch (creep.memory.state) {
                 case `justSpawned`:
-                    console.log("new creep just spawned");
                     creep.memory.state = "hasNoEnergy";
                     break;
                 case `hasNoEnergy`:

@@ -55,7 +55,6 @@ initCreepPrototypes = () => {
             }
             let targetfound = false;
             for (let i in energyRequests) {
-                console.log("energyRequests:", energyRequests);
                 let flag = Game.flags[energyRequests[i]];
                 if (flag.memory.energyRequired) {
                     if (flag.memory.energyRequired > 0) {
@@ -86,9 +85,7 @@ initCreepPrototypes = () => {
                 let retTransfer;
                 switch (flag.memory.type) {
                     case "base":
-                        console.log("test1");
                         let target = deliverToBase(creep);
-                        console.log("test2");
                         creep.moveTo(target);
                         retTransfer = creep.transfer(target, RESOURCE_ENERGY, creep.store.getUsedCapacity(RESOURCE_ENERGY));
                         break;
@@ -115,42 +112,46 @@ initCreepPrototypes = () => {
                         console.log(`flag.memory.type in creep prototype is not defined: ${flag.memory.type}`);
                 }
                 if (retTransfer === OK) {
-                    console.log("transfer sucesfull");
                     deleteDeliverySchedule(Game.flags[creep.memory.flagId], creep.id);
                 }
             }
             else {
                 // this can happen if for example the build flag is complete or similiar instances 
-                console.log("test1");
                 delete creep.memory.flagId;
             }
         }
     };
     deliverToBase = (creep) => {
-        console.log("test3", creep);
-        console.log("function deliver to Base is active ", creep.memory);
-        if (Memory.baseManager[creep.memory.base].fastFillerActive) {
-            console.log("test5");
+        if (Memory.baseManager[creep.memory.base].fastFillerActive && creep.memory.flagId) {
             let flag = Game.flags[creep.memory.flagId];
-            console.log("test 6 ", flag);
-            let containerPos = new RoomPosition(flag.pos.x, flag.pos.y + 1, flag.room.name);
-            let container = containerPos.lookFor(LOOK_STRUCTURES)[0];
-            console.log(container);
-            return container;
+            if (flag.room) {
+                let containerPos = new RoomPosition(flag.pos.x, flag.pos.y + 1, flag.room.name);
+                let container = containerPos.lookFor(LOOK_STRUCTURES)[0];
+                return container;
+            }
+            else {
+                console.log(`error in deliver to base look why this path is taken`);
+                return 1;
+            }
         }
         else {
-            return Game.getObjectById(Game.creeps[creep.name].memory.targetId);
+            let targetId = Game.creeps[creep.name].memory.targetId;
+            if (targetId) {
+                return Game.getObjectById(targetId);
+            }
+            else {
+                console.log(`error in deliver to base look why this path is taken`);
+                return 1;
+            }
         }
     };
     deleteDeliverySchedule = (flag, creepId) => {
-        console.log("deleteDeliverySchedule");
         let scheduledDeliverys = flag.memory.scheduledDeliverys;
-        for (let i in scheduledDeliverys) {
-            console.log(`scheduledDeliverys: ${scheduledDeliverys} , i: ${i} , scheduledDeliverys[i]: ${scheduledDeliverys[i]}`);
-            console.log("scheduledDeliverys[i].creepId");
-            if (scheduledDeliverys[i].creepId == creepId) {
-                console.log("delivered sucesfully ");
-                scheduledDeliverys.splice(i, 1);
+        if (scheduledDeliverys) {
+            for (let i = 0; i < (scheduledDeliverys === null || scheduledDeliverys === void 0 ? void 0 : scheduledDeliverys.length); i++) {
+                if (scheduledDeliverys[i].creepId == creepId) {
+                    scheduledDeliverys.splice(i, 1);
+                }
             }
         }
     };

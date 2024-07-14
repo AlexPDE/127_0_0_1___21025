@@ -10,6 +10,7 @@ const role_Hauler_1 = require("./role.Hauler");
 const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 const analytics_1 = require("./analytics");
 const creepBodys_1 = require("./creepBodys");
+const spawnManager_1 = require("./spawnManager");
 let baseManager;
 let initBaseManager;
 let addBaseFlag;
@@ -118,11 +119,10 @@ addBaseFlag = (pos) => {
         }
     }
     catch (error) {
-        console.log("error in add baseFlag");
+        console.log(`error in add baseFlag`);
     }
 };
 exports.addSourceFlagsForRoom = addSourceFlagsForRoom = (room, baseRoom, enableMining) => {
-    console.log("addSourceFlagsForRoom is running");
     var sources = room.find(FIND_SOURCES);
     for (let source of sources) {
         console.log(`add SourceFlagg for ${source}`);
@@ -159,7 +159,7 @@ enableMiningFlag = (flag) => {
             addSpawnRequest(true, memory_creep_1.default.MINER, baseRoom, flag.name);
             addSpawnRequest(false, memory_creep_1.default.HAULER, baseRoom);
             Memory.baseManager[baseRoom.name].sources.push(flag.name);
-            for (let i in Memory.baseManager[baseRoom.name].potentialSources) {
+            for (let i = 0; i < Memory.baseManager[baseRoom.name].potentialSources.length; i++) {
                 if (Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name) {
                     if (Memory.baseManager[baseRoom.name].potentialSources[i]) {
                         Memory.baseManager[baseRoom.name].potentialSources.splice(i, 1);
@@ -248,6 +248,8 @@ baseManager = (room) => {
             }
         }
         //------------------------------------- base stategy -----------------------------------
+        console.log("test1");
+        (0, spawnManager_1.spawnManager)(room);
         let strategy = Memory.baseManager[room.name].strategy;
         let spawn = room.find(FIND_MY_SPAWNS)[0];
         let upgraderFlag = spawn.room.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW } })[0];
@@ -363,7 +365,7 @@ baseManager = (room) => {
         }
     }
     catch (error) {
-        console.log("error in baseManager", error);
+        console.log(`error in baseManager`, error);
     }
 };
 exports.default = baseManager;

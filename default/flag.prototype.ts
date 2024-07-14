@@ -7,13 +7,14 @@ let initFlagPrototypes:Function
 let updateAllFlags:Function
 
 updateAllFlags = () => {
-    console.log("updateAllFlags is running")
     for (let flagName of keys(Game.flags)){
         let flag = Game.flags[flagName]
         switch (flag.memory.type){
             case"base": 
-                console.log("flag",flag, flag.memory.type)
                 flag.updateSpawnFlag(flag)
+                break;
+            case"source":
+                flag.updateEnergySupplyFlag(flag)
                 break;
 
             default: console.log(`Update all flags is not defined for type: ${Game.flags[flagName].memory.type}`)
@@ -62,7 +63,7 @@ initFlagPrototypes= ()=>{
         if(flag.memory.assignedBase){
             let requestFlags = Memory.baseManager[flag.memory.assignedBase].energyRequests
             if(requestFlags){
-                for ( let i in requestFlags){
+                for (let i= 0;i< requestFlags.length;i++){
                     if (requestFlags[i] == flag.name){
                         requestFlags.splice(i,1)
                         flag.remove()
@@ -83,20 +84,30 @@ initFlagPrototypes= ()=>{
 
 
     Flag.prototype.updateSpawnFlag = (flag:Flag) =>{
-        console.log("updateSpawnFlag is running")
         // check the energy required
         let scheduledDeliverys = flag.memory.scheduledDeliverys
         let eneryOnRoute = 0
-        for (let i in scheduledDeliverys){
-            console.log(i)
-            let creep = Game.getObjectById(scheduledDeliverys[i].creepId)
-            if(creep ===null){
-                Game.getObjectById(scheduledDeliverys.splice(i,1)
-            }else{
-                eneryOnRoute = eneryOnRoute + scheduledDeliverys[i]["amount"]
+        if(scheduledDeliverys){
+
+        
+            for (let i = 0 ; i < scheduledDeliverys.length;i++){
+                let creep = Game.getObjectById(scheduledDeliverys[i].creepId)
+                if(creep ===null){
+                    if(scheduledDeliverys[i]){}
+                    scheduledDeliverys.splice(i,1);
+
+                }
+                else{
+
+                    eneryOnRoute = eneryOnRoute + scheduledDeliverys[i]["amount"]
+
+                }
             }
         }
-        flag.memory.energyRequired = flag.room.energyCapacityAvailable-flag.room?.energyAvailable - eneryOnRoute
+        if(flag.room){
+            flag.memory.energyRequired = flag.room.energyCapacityAvailable-flag.room?.energyAvailable - eneryOnRoute
+        }
+        
 
         //add Extensions to the room 
         if(flag.room){

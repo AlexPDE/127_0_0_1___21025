@@ -8,6 +8,9 @@ import { typeHauler } from "./role.Hauler";
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
 import { initialiseAnalytics } from "./analytics";
 import { typeScout } from "./creepBodys";
+import { spawnManager } from "./spawnManager";
+
+
 
 let baseManager: Function;
 let initBaseManager:Function;
@@ -121,13 +124,12 @@ addBaseFlag = (pos:RoomPosition)=>{
             addEnergyRequestFlag()
         }
     } catch (error) {
-        console.log("error in add baseFlag")
+        console.log(`error in add baseFlag`)
     }
 }
 
 
 addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
-    console.log("addSourceFlagsForRoom is running")
     var sources = room.find(FIND_SOURCES)
     for (let source of sources){
         console.log(`add SourceFlagg for ${source}`)
@@ -168,7 +170,7 @@ enableMiningFlag = (flag:Flag) =>{
             addSpawnRequest(true,MemoryRole.MINER,baseRoom,flag.name)
             addSpawnRequest(false,MemoryRole.HAULER,baseRoom)
             Memory.baseManager[baseRoom.name].sources.push(flag.name)
-            for (let i in Memory.baseManager[baseRoom.name].potentialSources){
+            for (let i = 0; i< Memory.baseManager[baseRoom.name].potentialSources.length; i++){
                 if(Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name){
                     if(Memory.baseManager[baseRoom.name].potentialSources[i]){
                         Memory.baseManager[baseRoom.name].potentialSources.splice(i,1)
@@ -273,7 +275,8 @@ try {
         }
     }
     //------------------------------------- base stategy -----------------------------------
-
+    console.log("test1")
+    spawnManager(room)
     let strategy = Memory.baseManager[room.name].strategy
     let spawn = room.find(FIND_MY_SPAWNS)[0]
     let upgraderFlag = spawn.room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})[0]
@@ -411,7 +414,7 @@ try {
     }
 
 } catch (error) {
-    console.log("error in baseManager",error)
+    console.log(`error in baseManager`,error)
 }
     
 }
