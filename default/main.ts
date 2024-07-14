@@ -8,15 +8,13 @@ import roleMiner from "./role.miner";
 import roleHauler from "./role.Hauler";
 import diedCreepManager from "./diedCreepManagment";
 import roleScout from "./role.scout";
-import { calculateAverage, saveHistory, startAnalytics } from "./analytics";
+import { calculateAverage, genericAnalyticsCalculations, startAnalytics } from "./analytics";
 
 
 export function loop():void{
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
          var totalEnergyHarvested = 0
-
-
 
         initPrototypes()
         for (let i in Game.flags){
@@ -27,7 +25,6 @@ export function loop():void{
         }
         diedCreepManager()
         baseManager(Game.spawns["Spawn1"].room)
-
         startAnalytics()
         for(var name in Game.creeps){
             var creep:Creep = Game.creeps[name]
@@ -52,11 +49,18 @@ export function loop():void{
 
             //testing Functions here--------------------------
 
-            //saving analytics Data
-            calculateAverage()
-            saveHistory()
-
         }
+        //setStrategy here every 10 ticks
+
+        if(Game.time%10 == 0){
+            
+        }
+
+        //analytics
+        genericAnalyticsCalculations()
+        let CPUBeforAnalytics = Game.cpu.getUsed()
+        calculateAverage()
+        let CPUAfterAnalytics = Game.cpu.getUsed()
     } catch (error) {
         console.log(`mn loop ran into ${error}`)
     }

@@ -33,6 +33,7 @@ exports.default = roleHarvester = {
 };
 exports.typeHarvester = {
     role: "harvester",
+    baseBody: [MOVE, WORK, CARRY],
     body: [MOVE, WORK, CARRY],
     name: "Harvester" + Game.time,
     state: "justSpawned",

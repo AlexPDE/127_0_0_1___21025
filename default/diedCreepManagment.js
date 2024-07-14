@@ -10,7 +10,6 @@ diedCreepManager = () => {
             if (creepMemory.base) {
                 switch (creepMemory.role) {
                     case "miner":
-                        console.log("miner has died");
                         if (creepMemory.base) {
                             (0, baseManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.targetId);
                             delete Memory.creeps[i];

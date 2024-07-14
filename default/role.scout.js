@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeScout = void 0;
 const explorationManager_1 = require("./explorationManager");
+const baseManager_1 = require("./baseManager");
 let roleScout;
 exports.default = roleScout = {
     run(creep) {
@@ -10,6 +10,7 @@ exports.default = roleScout = {
             creep.moveTo(targetPos);
             if (creep.pos.inRangeTo(targetPos, 24)) {
                 (0, explorationManager_1.addRoomToExploration)(creep.memory.scoutRoom, creep.memory.base);
+                (0, baseManager_1.addSourceFlagsForRoom)(creep.room, Game.rooms[creep.memory.base], false);
                 delete creep.memory.scoutRoom;
             }
         }
@@ -66,12 +67,5 @@ exports.default = roleScout = {
             }
         }
     },
-};
-exports.typeScout = {
-    role: "scout",
-    baseBody: [MOVE],
-    body: [],
-    name: "scout",
-    state: "justSpawned",
 };
 //# sourceMappingURL=role.scout.js.map

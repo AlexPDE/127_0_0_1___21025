@@ -6,7 +6,6 @@ let initStructureSpawnPrototypes:Function
 initStructureSpawnPrototypes= ()=>{
     StructureSpawn.prototype.spawnTypeCreep = (maxSize: boolean, spawn:StructureSpawn, creepType:creepType, targetId?)=>{
         let body = creepType.baseBody 
-        console.log(maxSize)
         if(maxSize){
             let room = spawn.room
             let energyBody = 0
@@ -21,7 +20,7 @@ initStructureSpawnPrototypes= ()=>{
 
             
 
-            console.log(availableEnergy/costBodyAddition)
+            //console.log(availableEnergy/costBodyAddition)
         }
 
 

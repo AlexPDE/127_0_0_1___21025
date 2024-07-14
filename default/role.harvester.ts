@@ -39,6 +39,7 @@ export default roleHarvester = {
 
 export let typeHarvester:creepType = {
     role:"harvester",
+    baseBody:[MOVE,WORK,CARRY],
     body:[MOVE,WORK,CARRY],
     name:"Harvester" + Game.time,
     state:"justSpawned",

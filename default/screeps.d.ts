@@ -16,6 +16,7 @@ declare global {
             energyRequests:string[];
             RecquestesSpawns:spawnRequestType[];
             strategy:string;
+            imidiateGoal:string;
             exploredRooms:{
                 [key:string]:{
                     distance?:number
@@ -42,13 +43,17 @@ declare global {
         sinkSpawn:analyticsEntry,
         sinkUpgrading:analyticsEntry,
         sinkRepair:analyticsEntry,
+        CPUUsedPercentage:analyticsEntry,
     }
     
     interface analyticsEntry {
         perTickCurrent:number;
+        past10Ticks:number[];
         past100Ticks:number[];
+        past1000Ticks:number[];
         average10Ticks:number;
         average100Ticks:number;
+        average1000Ticks:number;
     }
     
     interface spawnRequestType{

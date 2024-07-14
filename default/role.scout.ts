@@ -1,5 +1,6 @@
 import { exit } from "process"
 import { addRoomToExploration } from "./explorationManager"
+import { addSourceFlagsForRoom } from "./baseManager"
 
 let roleScout: {
     /**
@@ -8,6 +9,7 @@ let roleScout: {
     run(creep: Creep): void
 }
 
+
 export default roleScout = {
     run(creep):void {
         if(creep.memory.scoutRoom){
@@ -15,6 +17,7 @@ export default roleScout = {
             creep.moveTo(targetPos)
             if(creep.pos.inRangeTo(targetPos,24)){    
                 addRoomToExploration(creep.memory.scoutRoom, creep.memory.base)
+                addSourceFlagsForRoom(creep.room, Game.rooms[creep.memory.base],false)
                 delete creep.memory.scoutRoom
             }
         }else{
@@ -75,10 +78,4 @@ export default roleScout = {
     },
 }
 
-export let typeScout:creepType = {
-    role:"scout",
-    baseBody:[MOVE],
-    body:[],
-    name:"scout",
-    state:"justSpawned",
-}
+

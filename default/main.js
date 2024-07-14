@@ -47,10 +47,15 @@ function loop() {
                 role_scout_1.default.run(creep);
             }
             //testing Functions here--------------------------
-            //saving analytics Data
-            (0, analytics_1.calculateAverage)();
-            (0, analytics_1.saveHistory)();
         }
+        //setStrategy here every 10 ticks
+        if (Game.time % 10 == 0) {
+        }
+        //analytics
+        (0, analytics_1.genericAnalyticsCalculations)();
+        let CPUBeforAnalytics = Game.cpu.getUsed();
+        (0, analytics_1.calculateAverage)();
+        let CPUAfterAnalytics = Game.cpu.getUsed();
     }
     catch (error) {
         console.log(`mn loop ran into ${error}`);

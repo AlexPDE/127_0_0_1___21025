@@ -5,9 +5,9 @@ import { typeUpgrader } from "./role.upgrader";
 import { typeBuilder } from "./role.builder";
 import { typeMiner } from "./role.miner";
 import { typeHauler } from "./role.Hauler";
-import { typeScout } from "./role.scout";
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
 import { initialiseAnalytics } from "./analytics";
+import { typeScout } from "./creepBodys";
 
 let baseManager: Function;
 let initBaseManager:Function;
@@ -22,6 +22,8 @@ let removeEnergyRequestFlag:Function;
 let addConstructionFlag:Function;
 let removeConstructionFlag:Function;
 let addRoomToExploration:Function;
+let enableMiningFlag: Function;
+let estimateResourcesRequired:Function;
 
 dynamicSpawn = (baseRoom:Room) =>{
     let spawning = false
@@ -53,7 +55,6 @@ dynamicSpawn = (baseRoom:Room) =>{
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i,1)
                     let requiredEnergy = baseRoom.energyCapacityAvailable
                     Game.flags[baseRoom.memory.baseFlagName].memory.energyRequired = requiredEnergy
-
                 }
             }  
         }   
@@ -74,39 +75,64 @@ addSpawnRequest = (maxSize:boolean, type: string,baseRoom:Room,target?:string) =
 
 export {addSpawnRequest}
 
-
-
-
-addBaseFlag = (spawn:StructureSpawn)=>{
-
-    let flagName = spawn.pos.createFlag(spawn.id, COLOR_GREEN)
-    if(flagName != -3 &&flagName != -10){
-        Memory.baseManager[spawn.pos.roomName].energyRequests.push(flagName)
-        Game.flags[flagName].memory.type = "base"
-        Game.flags[flagName].memory.extensions = []
-        spawn.room.memory.baseFlagName = flagName
-    }
-
+addBaseFlag = (pos:RoomPosition)=>{
+    try {
+        console.log(`base flag is added in room ${pos.roomName}`)
+        let flagName = pos.createFlag(pos.roomName, COLOR_GREEN)
+        if(flagName != -3 &&flagName != -10){
+            //Memory.baseManager[pos.roomName].energyRequests.push(flagName)
+            Game.flags[flagName].memory.energyRequired = 0
+            Game.flags[flagName].memory.type = "base"
+            Game.flags[flagName].memory.extensions = []
+            Game.flags[flagName].memory.estimatedCPUUsage = 0
+            Game.flags[flagName].memory.estimatedEnergyUsage = 0
+            Game.flags[flagName].memory.estimatedSpawnUsage = 0
+            Game.flags[flagName].memory.energyRequired = 300
+            addEnergyRequestFlag()
+        }
+} catch (error) {
+    console.log("error in add baseFlag")
+}
+   
 }
 
-addSourceFlagsForRoom = (room:Room, baseRoom:Room) =>{
+addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
+    console.log("addSourceFlagsForRoom is running")
     var sources = room.find(FIND_SOURCES)
     for (let source of sources){
-        let baseFlag = Game.flags[baseRoom.memory.baseFlagName]
+        console.log(`add SourceFlagg for ${source}`)
+        let baseFlag = Game.flags[baseRoom.name]
         if(baseFlag){
             let path:PathStep[] = source.pos.findPathTo(baseFlag,{ignoreCreeps:true})
             let flagName = room.createFlag(path[0].x,path[0].y,source.id, COLOR_ORANGE)
-
             if((flagName!= -3 && -10)&&Memory.baseManager){
-                addSpawnRequest(true,MemoryRole.MINER,baseRoom,flagName)
-                addSpawnRequest(false,MemoryRole.HAULER,baseRoom)
-                Memory.baseManager[baseRoom.name].sources.push(source.id)
-                Game.flags[flagName].memory.hasMiner = false
-                Game.flags[flagName].memory.type = "source"
-                Game.flags[flagName].pos.createConstructionSite(STRUCTURE_CONTAINER)
+                let flag = Game.flags[flagName]
+                flag.memory.type = "source"
+                flag.memory.distanceToBase = path.length
+                flag.memory.estimatedCPUUsage = 5
+                flag.memory.estimatedEnergyUsage = 500/1500
+                flag.memory.estimatedSpawnUsage = 15/1500
+                if(enableMining){
+                    enableMiningFlag(flag,baseRoom)
+                }
             }
         }
     }	
+}
+
+
+export {addSourceFlagsForRoom}
+
+enableMiningFlag = (flag:Flag,baseRoom:Room) =>{
+    try {
+        console.log(`enable mining for source  ${flag.name}`)
+        addSpawnRequest(true,MemoryRole.MINER,baseRoom,flag.name)
+        addSpawnRequest(false,MemoryRole.HAULER,baseRoom)
+        Memory.baseManager[baseRoom.name].sources.push(flag.name)
+        flag.memory.type = "source"
+    } catch (error) {
+        console.log(`error in enableMininfFlag`)
+    }    
 }
 
 
@@ -121,6 +147,7 @@ removeSourceFlag = (flag:Flag,baseRoom:Room) =>{
     }
 }
 
+
 addConstructionFlag = (constructionsSite: ConstructionSite,baseRoom:Room) =>{
     let flagName = constructionsSite.pos.createFlag(constructionsSite.id,COLOR_BROWN)
     Memory.baseManager[baseRoom.name].energyRequests.push(constructionsSite.id)
@@ -128,9 +155,11 @@ addConstructionFlag = (constructionsSite: ConstructionSite,baseRoom:Room) =>{
         Game.flags[flagName].memory.energyRequired = constructionsSite.progressTotal
         Game.flags[flagName].memory.type = "construction"
         Game.flags[flagName].memory.assignedBase = baseRoom.name
+        Game.flags[flagName].memory.estimatedCPUUsage = 0
+        Game.flags[flagName].memory.estimatedEnergyUsage = 0 
+        Game.flags[flagName].memory.estimatedSpawnUsage = 0 
     }
 }
-
 
 
 
@@ -140,6 +169,9 @@ addEnergyRequestFlag=(pos:RoomPosition, baseRoom:Room, name:string, type:string)
         let flag = Game.flags[flagName]
         flag.memory.assignedBase = baseRoom.name
         flag.memory.type = type
+        flag.memory.estimatedCPUUsage = 0
+        flag.memory.estimatedEnergyUsage = 0
+        flag.memory.estimatedSpawnUsage = 0
         Memory.baseManager[baseRoom.name].energyRequests.push(name)
     }
 }
@@ -159,14 +191,18 @@ removeEnergyRequestFlag = (name:string) =>{
 
 
 addUpgraderFlag=(baseRoom:Room)=>{
-    if(baseRoom.controller){
-        let path:PathStep[] = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name],{ignoreCreeps:true})
-        let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name)
-        addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id,EnergyRequestFlagTypes.UPGRADER)
-        addSpawnRequest(false,MemoryRole.UPGRADER,baseRoom)
+    try {
+        if(baseRoom.controller){
+            let path:PathStep[] = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name],{ignoreCreeps:true})
+            let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name)
+            addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id,EnergyRequestFlagTypes.UPGRADER)
+            addSpawnRequest(false,MemoryRole.UPGRADER,baseRoom)
+        } 
+    } catch (error) {
+        console.log(`error in addUpgraderFlag`)
     }
+    
 }
-
 
 initBaseManager = (room:Room) =>{
     if(!Memory.baseManager){
@@ -179,26 +215,28 @@ initBaseManager = (room:Room) =>{
             [baseName]:{
                 RCL:1,
                 sources: [],
-                energyRequests: [Game.spawns["Spawn1"].id],
+                energyRequests: [],
                 RecquestesSpawns:[],
                 strategy: "initiate",
+                imidiateGoal: "expandSources",
                 exploredRooms:{},
                 unexploredRooms: {},
             }
         }
-        addBaseFlag(Game.spawns["Spawn1"])
+        addBaseFlag(Game.spawns["Spawn1"].pos)
         //addSpawnRequest(MemoryRole.HAULER,Game.spawns["Spawn1"].room,Game.spawns["Spawn1"].room.name + " base")
-        addSourceFlagsForRoom(baseRoom,baseRoom)
+        addSourceFlagsForRoom(baseRoom,baseRoom,true)
         addUpgraderFlag(room)
     }else{
         //------------------------------------------this is only for testing puposes--------------------------------------------
     }
  }
 
+
 baseManager = (room:Room) =>{
+try {
     initBaseManager(room)
     dynamicSpawn(room)
-
     // ---------------------------------------------- construction Management----------------------------------------------------
     const builder:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.BUILDER)
     let constructionFlag = room.find(FIND_FLAGS,{filter:{color:COLOR_BROWN}})[0]
@@ -214,7 +252,7 @@ baseManager = (room:Room) =>{
     let strategy = Memory.baseManager[room.name].strategy
     let spawn = room.find(FIND_MY_SPAWNS)[0]
     let upgraderFlag = spawn.room.find(FIND_FLAGS,{filter:{color:COLOR_YELLOW}})[0]
-    let spawnFlag = Game.flags[spawn.id]
+    let spawnFlag = Game.flags[spawn.room.name]
     switch(strategy){
         case"initiate":
             Memory.baseManager[room.name].strategy = "waitForInitialCreeps"
@@ -225,14 +263,11 @@ baseManager = (room:Room) =>{
             const upgrader:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.UPGRADER)
             const miner:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.MINER)
             const hauler:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.HAULER)
-            if (builder.length > 0 && upgrader.length > 0 && miner.length > 0 && hauler.length > 0){
+            if (miner.length > 0 && hauler.length > 0){
                 Memory.baseManager[room.name].strategy = "pushToRCL2"
                 addSpawnRequest(false,MemoryRole.SCOUT,room)
             }
-
             break;
-
-
 
         case"pushToRCL2":
             if(room.controller){
@@ -289,19 +324,72 @@ baseManager = (room:Room) =>{
 
         default:console.log(`strategy set in BaseManager for ${room.name} is not defined: ${strategy}`)
     }
-    //remote mining decisions------------------------
-
-    let exploredRooms = Memory.baseManager[room.name].exploredRooms
-    for(let i in exploredRooms){
-        if(exploredRooms[i].roomType == "potentialRemoteMine"){
-            console.log("initate remote mine")
+    //evaluation how much energy is used------------------------
+    let estimeteResourcesNow = estimateResourcesRequired(room)
+    let cpuLimiting = false
+    let energyLimiting = false
+    let spawnLimiting = false
+    if(estimeteResourcesNow[0]){
+        if(estimeteResourcesNow[0] > 0.9){
+            cpuLimiting = true
         }
-        console.log(exploredRooms[i])
     }
+    if(estimeteResourcesNow[1]){
+        if(estimeteResourcesNow[1] > 0.9){
+            energyLimiting = true
+        }
+    }
+    if(estimeteResourcesNow[2]){
+        if(estimeteResourcesNow[2] > 0.9){
+            spawnLimiting = true
+        }
+    }
+    console.log("test111")
+    console.log(`CPU Estimation: ${estimeteResourcesNow[0]} cpuLimiting ${cpuLimiting} ||EnergyRequired Estimation: ${estimeteResourcesNow[1]} energyLimiting ${energyLimiting} ||Spawn time Estimation: ${estimeteResourcesNow[2]} spawnLimiting ${spawnLimiting}`)
+
+
+} catch (error) {
+    console.log("error in baseManager",error)
+}
     
 }
 export default baseManager
 
+estimateResourcesRequired=(room:Room): [Number, Number, Number] =>{
+
+    let sources = Memory.baseManager[room.name].sources
+    let energyRequest = Memory.baseManager[room.name].energyRequests
+    let ResourceUsers = [sources,energyRequest]
+    let estimatedResourcesUse =[]
+    let estimatedCPUUsage = 0 
+    let estimatedEnergyUsage = 0
+    let estimatedSpawnUsage = 0
+    let totalEstimatedCPUUsage = 0 
+    let totalEstimatedEnergyUsage = 0
+    let totalEstimatedSpawnUsage = 0
+
+    for (let i in ResourceUsers) {
+
+        estimatedCPUUsage = 0
+        estimatedEnergyUsage = 0
+        estimatedSpawnUsage = 0 
+        for(let k in ResourceUsers[i]){
+            let flag = Game.flags[ResourceUsers[i][k]]
+            console.log(flag)
+            estimatedCPUUsage = estimatedCPUUsage + flag.memory.estimatedCPUUsage
+            estimatedEnergyUsage = estimatedEnergyUsage + flag.memory.estimatedEnergyUsage
+            estimatedSpawnUsage = estimatedSpawnUsage + flag.memory.estimatedSpawnUsage
+        }
+        totalEstimatedCPUUsage = totalEstimatedCPUUsage + estimatedCPUUsage
+        totalEstimatedEnergyUsage = totalEstimatedEnergyUsage + estimatedEnergyUsage
+        totalEstimatedSpawnUsage = totalEstimatedSpawnUsage + estimatedSpawnUsage
+        
+    }
+    console.log(`totalEstimatedCPUUsage ${totalEstimatedCPUUsage}`)
+    console.log(`totalEstimatedEnergyUsage ${totalEstimatedEnergyUsage}`)  
+    console.log(`totalEstimatedSpawnUsage ${totalEstimatedSpawnUsage}`)        
+    return [totalEstimatedCPUUsage,totalEstimatedEnergyUsage,totalEstimatedSpawnUsage]  
+}
 
 
 

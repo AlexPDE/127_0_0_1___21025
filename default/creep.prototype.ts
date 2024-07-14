@@ -1,5 +1,6 @@
 import * as _ from "lodash"
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes"
+import { spawn } from "child_process"
 
 let initCreepPrototypes:Function
 
@@ -51,32 +52,47 @@ initCreepPrototypes= ()=>{
         }
     }
 
-
-
     Creep.prototype.deliverEnergy = (creep:Creep) => {
         try {
             if(!creep.memory.targetId){
                 if(creep.memory.base){
-                    let energyRequest = Memory.baseManager[creep.memory.base].energyRequests
-                    for(let i = 0 ; i < energyRequest.length; i++){
-                        let flag = Game.flags[energyRequest[i]]
+                    console.log("test1")
+                    let energyRequests = []
+                    for (let i in Memory.baseManager[creep.memory.base].energyRequests){
+                        console.log("test2")
+                        //energyRequests.pushMemory.baseManager[creep.memory.base].energyRequests[i]
+                    }
+                    energyRequests.push(creep.room.find(FIND_MY_SPAWNS)[0].id)
+                    console.log(energyRequests)
+                    for(let i = 0 ; i < energyRequests.length; i++){
+                        let flag = Game.flags[energyRequests[i]]
                         if(flag){
                             if(flag.memory.energyRequired){
                                 if(flag.memory.energyRequired>0){
-                                    creep.memory.targetId = energyRequest[i]
+                                    creep.memory.targetId = energyRequests[i]
                                     break;
                                 }
                             }
                         }else{
-
+                            let spawn = Game.getObjectById(energyRequests[i])
+                            console.log(`spawn ${spawn}`)
+                            if(spawn instanceof Spawn){
+                                flag = Game.flags[spawn.room.name]
+                                console.log(flag)
+                                if(flag.memory.energyRequired){
+                                    if(flag.memory.energyRequired>0){
+                                        creep.memory.targetId = spawn.room.name
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         
                     }
                 }
             }else{
                 let targetFlag = Game.flags[creep.memory.targetId]
-                if(targetFlag){
-                    
+                if(targetFlag){     
                     if(targetFlag.memory.type == EnergyRequestFlagTypes.BUILDER){
                         if(targetFlag.memory.assignedBuilder){
                             let target = Game.getObjectById(targetFlag.memory.assignedBuilder)
@@ -107,7 +123,6 @@ initCreepPrototypes= ()=>{
                             }
                             if(result === ERR_FULL){
                                 delete creep.memory.targetId
-                                Game.flags[target.id].memory.energyRequired = 0 
                             }
                         }
                     }

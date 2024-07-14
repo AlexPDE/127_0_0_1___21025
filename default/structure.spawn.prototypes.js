@@ -5,7 +5,6 @@ let initStructureSpawnPrototypes;
 initStructureSpawnPrototypes = () => {
     StructureSpawn.prototype.spawnTypeCreep = (maxSize, spawn, creepType, targetId) => {
         let body = creepType.baseBody;
-        console.log(maxSize);
         if (maxSize) {
             let room = spawn.room;
             let energyBody = 0;
@@ -17,7 +16,7 @@ initStructureSpawnPrototypes = () => {
             for (let i = 0; i < creepType.body.length; i++) {
                 costBodyAddition = costBodyAddition + BODYPART_COST[creepType.body[i]];
             }
-            console.log(availableEnergy / costBodyAddition);
+            //console.log(availableEnergy/costBodyAddition)
         }
         if (creepType.role == memory_creep_1.default.MINER || creepType.role == memory_creep_1.default.BUILDER) {
             var spawnCreepReturn = spawn.spawnCreep(body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state, targetId: targetId, base: spawn.room.name } });
