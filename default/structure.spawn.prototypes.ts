@@ -4,7 +4,7 @@ import MemoryRole from "./memory.creep"
 let initStructureSpawnPrototypes:Function
 
 initStructureSpawnPrototypes= ()=>{
-    StructureSpawn.prototype.spawnTypeCreep = (maxSize: boolean, spawn:StructureSpawn, creepType:creepType, targetId?)=>{
+    StructureSpawn.prototype.spawnTypeCreep = (maxSize: boolean, spawn:StructureSpawn, creepType:creepType, flagId?)=>{
         let body = creepType.baseBody 
         if(maxSize){
             let room = spawn.room
@@ -25,7 +25,7 @@ initStructureSpawnPrototypes= ()=>{
 
 
         if(creepType.role == MemoryRole.MINER||creepType.role == MemoryRole.BUILDER){
-            var spawnCreepReturn:ScreepsReturnCode = spawn.spawnCreep(body,creepType.name+Game.time   , {memory: {role: creepType.role, state:creepType.state, targetId: targetId, base:spawn.room.name}})
+            var spawnCreepReturn:ScreepsReturnCode = spawn.spawnCreep(body,creepType.name+Game.time   , {memory: {role: creepType.role, state:creepType.state, flagId: flagId, base:spawn.room.name}})
         }else{
             var spawnCreepReturn:ScreepsReturnCode = spawn.spawnCreep(body,creepType.name+Game.time, {memory: {role: creepType.role, state:creepType.state, base:spawn.room.name}})
         }

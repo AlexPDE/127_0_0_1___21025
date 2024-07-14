@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const memory_creep_1 = require("./memory.creep");
 let initStructureSpawnPrototypes;
 initStructureSpawnPrototypes = () => {
-    StructureSpawn.prototype.spawnTypeCreep = (maxSize, spawn, creepType, targetId) => {
+    StructureSpawn.prototype.spawnTypeCreep = (maxSize, spawn, creepType, flagId) => {
         let body = creepType.baseBody;
         if (maxSize) {
             let room = spawn.room;
@@ -19,7 +19,7 @@ initStructureSpawnPrototypes = () => {
             //console.log(availableEnergy/costBodyAddition)
         }
         if (creepType.role == memory_creep_1.default.MINER || creepType.role == memory_creep_1.default.BUILDER) {
-            var spawnCreepReturn = spawn.spawnCreep(body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state, targetId: targetId, base: spawn.room.name } });
+            var spawnCreepReturn = spawn.spawnCreep(body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state, flagId: flagId, base: spawn.room.name } });
         }
         else {
             var spawnCreepReturn = spawn.spawnCreep(body, creepType.name + Game.time, { memory: { role: creepType.role, state: creepType.state, base: spawn.room.name } });

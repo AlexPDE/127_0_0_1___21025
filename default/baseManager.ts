@@ -113,16 +113,16 @@ addBaseFlag = (pos:RoomPosition)=>{
             Game.flags[flagName].memory.energyRequired = 0
             Game.flags[flagName].memory.type = "base"
             Game.flags[flagName].memory.extensions = []
+            Game.flags[flagName].memory.scheduledDeliverys = []
             Game.flags[flagName].memory.estimatedCPUUsage = 0
             Game.flags[flagName].memory.estimatedEnergyUsage = 0
             Game.flags[flagName].memory.estimatedSpawnUsage = 0
             Game.flags[flagName].memory.energyRequired = 300
             addEnergyRequestFlag()
         }
-} catch (error) {
-    console.log("error in add baseFlag")
-}
-   
+    } catch (error) {
+        console.log("error in add baseFlag")
+    }
 }
 
 
@@ -173,8 +173,10 @@ enableMiningFlag = (flag:Flag) =>{
             for (let i in Memory.baseManager[baseRoom.name].potentialSources){
                 if(Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name){
                     console.log(i,flag.name)
-
-                    Memory.baseManager[baseRoom.name].potentialSources.splice(i,1)
+                    if(Memory.baseManager[baseRoom.name].potentialSources[i]){
+                        Memory.baseManager[baseRoom.name].potentialSources.splice(i,1)
+                    }
+                    
                 }
             }
             flag.memory.type = "source"
@@ -185,7 +187,6 @@ enableMiningFlag = (flag:Flag) =>{
         console.log(`error in enableMininfFlag`)
     }    
 }
-
 
 removeSourceFlag = (flag:Flag,baseRoom:Room) =>{
     if(Memory.baseManager){

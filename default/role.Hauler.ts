@@ -23,7 +23,7 @@ export default roleHauler = {
                     creep.deliverEnergy(creep)
                     if(creep.store.getUsedCapacity(RESOURCE_ENERGY)== 0){
                         creep.memory.state = "hasNoEnergy"
-                        delete creep.memory.targetId
+                        delete creep.memory.flagId
                     }
                     break;
 

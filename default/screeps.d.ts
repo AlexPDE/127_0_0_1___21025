@@ -3,6 +3,7 @@ declare global {
         role:string;  
         state?:string;
         targetId?:string;
+        flagId?:string
         base:string;
         scoutRoom?:string,
     }

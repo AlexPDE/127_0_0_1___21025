@@ -11,7 +11,7 @@ diedCreepManager = () => {
                 switch (creepMemory.role) {
                     case "miner":
                         if (creepMemory.base) {
-                            (0, baseManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.targetId);
+                            (0, baseManager_1.addSpawnRequest)(true, "miner", Game.rooms[creepMemory.base], creepMemory.flagId);
                             delete Memory.creeps[i];
                         }
                         break;

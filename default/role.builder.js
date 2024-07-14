@@ -18,10 +18,10 @@ exports.default = roleBuilder = {
                     creep.memory.state = "buildFlag";
                     break;
                 case `buildFlag`:
-                    if (creep.memory.targetId) {
-                        let flag = Game.flags[creep.memory.targetId];
+                    if (creep.memory.flagId) {
+                        let flag = Game.flags[creep.memory.flagId];
                         flag.memory.assignedBuilder = creep.id;
-                        let constructionSite = Game.getObjectById(creep.memory.targetId);
+                        let constructionSite = Game.getObjectById(creep.memory.flagId);
                         if (constructionSite instanceof ConstructionSite) {
                             let ret = creep.build(constructionSite);
                             if (ret === OK) {
@@ -34,13 +34,13 @@ exports.default = roleBuilder = {
                         else {
                             console.log(`constructionSite is finished`, flag);
                             flag.removeConstructionFlag(flag);
-                            delete creep.memory.targetId;
+                            delete creep.memory.flagId;
                         }
                     }
                     else {
                         let constructionFlag = creep.room.find(FIND_FLAGS, { filter: { color: COLOR_BROWN } })[0];
                         if (constructionFlag) {
-                            creep.memory.targetId = constructionFlag.name;
+                            creep.memory.flagId = constructionFlag.name;
                         }
                     }
                     break;
