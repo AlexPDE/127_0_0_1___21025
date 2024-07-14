@@ -1,10 +1,28 @@
 import * as _ from "lodash"
 import { addEnergyRequestFlag } from "./baseManager"
+import { forEach, keys } from "lodash"
 
 let initFlagPrototypes:Function
 
+let updateAllFlags:Function
+
+updateAllFlags = () => {
+    console.log("updateAllFlags is running")
+    for (let flagName of keys(Game.flags)){
+        switch (Game.flags[flagName].memory.type){
+            case"base": 
+                break;
+
+            default: console.log(`Update all flags is not defined for type: ${Game.flags[flagName].memory.type}`)
+        }
+    }
+
+}
+
+export {updateAllFlags}
+
 initFlagPrototypes= ()=>{
-    
+
     Flag.prototype.updateEnergySupplyFlag = (flag:Flag) =>{
         if(flag.room){
 

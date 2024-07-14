@@ -67,7 +67,10 @@ initCreepPrototypes= ()=>{
             for (let i in Memory.baseManager[creep.memory.base].energyRequests) {
                 energyRequests.push( Memory.baseManager[creep.memory.base].energyRequests[i])  
             }
+            let targetfound = false
+            
             for (let i in energyRequests){
+                console.log("energyRequests:", energyRequests )
                 let flag = Game.flags[energyRequests[i]]
                 if(flag.memory.energyRequired >0){
                     if(flag.memory.type == "base"){
@@ -83,11 +86,14 @@ initCreepPrototypes= ()=>{
                         creepId: creep.id,
                         amount: creep.store.getUsedCapacity(RESOURCE_ENERGY)
                     })
+                    break
                 }
+                
             }
         }else{
             // there is a target defined now we need to deliver to it
             let flag = Game.flags[creep.memory.flagId]
+            console.log("flag" , flag )
             if(flag){
                 let retTransfer:ScreepsReturnCode
                 switch(flag.memory.type){
@@ -119,6 +125,7 @@ initCreepPrototypes= ()=>{
                 }
             }else{
                 // this can happen if for example the build flag is complete or similiar instances 
+                console.log("test1")
                 delete creep.memory.flagId
             }
 

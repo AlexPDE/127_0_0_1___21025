@@ -9,11 +9,15 @@ import roleHauler from "./role.Hauler";
 import diedCreepManager from "./diedCreepManagment";
 import roleScout from "./role.scout";
 import { calculateAverage, genericAnalyticsCalculations, startAnalytics } from "./analytics";
+import { updateAllFlags } from "./flag.prototype";
+import { forEach, keys } from "lodash"
 
 
 export function loop():void{
     try {
+        
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
+        updateAllFlags()
          var totalEnergyHarvested = 0
 
         initPrototypes()

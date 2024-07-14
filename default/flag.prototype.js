@@ -1,7 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateAllFlags = void 0;
 const baseManager_1 = require("./baseManager");
+const lodash_1 = require("lodash");
 let initFlagPrototypes;
+let updateAllFlags;
+exports.updateAllFlags = updateAllFlags = () => {
+    console.log("updateAllFlags is running");
+    for (let flagName of (0, lodash_1.keys)(Game.flags)) {
+        switch (Game.flags[flagName].memory.type) {
+            case "base":
+                break;
+            default: console.log(`Update all flags is not defined for type: ${Game.flags[flagName].memory.type}`);
+        }
+    }
+};
 initFlagPrototypes = () => {
     Flag.prototype.updateEnergySupplyFlag = (flag) => {
         if (flag.room) {

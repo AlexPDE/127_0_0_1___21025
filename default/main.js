@@ -12,9 +12,11 @@ const role_Hauler_1 = require("./role.Hauler");
 const diedCreepManagment_1 = require("./diedCreepManagment");
 const role_scout_1 = require("./role.scout");
 const analytics_1 = require("./analytics");
+const flag_prototype_1 = require("./flag.prototype");
 function loop() {
     try {
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
+        (0, flag_prototype_1.updateAllFlags)();
         var totalEnergyHarvested = 0;
         (0, prototypesInit_1.default)();
         for (let i in Game.flags) {

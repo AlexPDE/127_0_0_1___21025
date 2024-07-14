@@ -160,7 +160,6 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
 
 export {addSourceFlagsForRoom}
 
-
 enableMiningFlag = (flag:Flag) =>{
     try {
         if(flag.memory.assignedBase){

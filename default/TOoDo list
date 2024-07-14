@@ -1,0 +1,7 @@
+- Priority spawning
+
+- dynamic body size
+
+- remove spawning of harvesters from source and implement dynamic spawning absed on resources available at source and sink total rate
+
+
