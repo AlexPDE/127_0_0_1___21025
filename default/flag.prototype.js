@@ -30,7 +30,6 @@ initFlagPrototypes = () => {
             }
             energyAvailable = energyAvailable - scheduledPickupSum;
             flag.memory.energyAvailable = energyAvailable;
-            console.log(`energy Available ${energyAvailable}`);
         }
     };
     Flag.prototype.removeConstructionFlag = (flag) => {

@@ -44,3 +44,4 @@ export let typeHarvester:creepType = {
     name:"Harvester" + Game.time,
     state:"justSpawned",
 }
+

@@ -35,7 +35,6 @@ initFlagPrototypes= ()=>{
             }
             energyAvailable = energyAvailable - scheduledPickupSum
             flag.memory.energyAvailable = energyAvailable
-            console.log(`energy Available ${energyAvailable}`)
         }
     }
     
@@ -81,3 +80,4 @@ initFlagPrototypes= ()=>{
 }
 
 export default initFlagPrototypes
+

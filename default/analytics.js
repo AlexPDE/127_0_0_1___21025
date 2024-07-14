@@ -29,8 +29,6 @@ let addEnergyHarvested = (amount) => {
 };
 exports.addEnergyHarvested = addEnergyHarvested;
 let genericAnalyticsCalculations = () => {
-    console.log(`Game.cpu.limit ${Game.cpu.limit}`);
-    console.log(`Game.cpu.getUsed ${Game.cpu.getUsed()}`);
     Memory.analytics.CPUUsedPercentage.perTickCurrent = Game.cpu.getUsed() / Game.cpu.limit;
     let spawnsNumb = 0;
     let spansSpawning = 0;

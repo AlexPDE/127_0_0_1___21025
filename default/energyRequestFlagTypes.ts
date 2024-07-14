@@ -5,3 +5,4 @@ enum EnergyRequestFlagTypes{
 }
 
 export default EnergyRequestFlagTypes
+

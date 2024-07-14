@@ -43,3 +43,4 @@ export let typeHauler:creepType = {
     name:"Hauler",
     state:"justSpawned",
 }
+

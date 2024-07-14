@@ -293,7 +293,6 @@ baseManager = (room) => {
                 let isRequestingMiner = false;
                 for (let i in Memory.baseManager[room.name].potentialSources) {
                 }
-                console.log("we need to open up mines");
                 break;
             default:
                 console.log(`base manager has an imidiate goal that is undefined ${Memory.baseManager[room.name].imidiateGoal}`);
@@ -347,7 +346,6 @@ estimateResourcesRequired = (room) => {
         estimatedSpawnUsage = 0;
         for (let k in ResourceUsers[i]) {
             let flag = Game.flags[ResourceUsers[i][k]];
-            console.log(flag);
             estimatedCPUUsage = estimatedCPUUsage + flag.memory.estimatedCPUUsage;
             estimatedEnergyUsage = estimatedEnergyUsage + flag.memory.estimatedEnergyUsage;
             estimatedSpawnUsage = estimatedSpawnUsage + flag.memory.estimatedSpawnUsage;
@@ -356,9 +354,9 @@ estimateResourcesRequired = (room) => {
         totalEstimatedEnergyUsage = totalEstimatedEnergyUsage + estimatedEnergyUsage;
         totalEstimatedSpawnUsage = totalEstimatedSpawnUsage + estimatedSpawnUsage;
     }
-    console.log(`totalEstimatedCPUUsage ${totalEstimatedCPUUsage}`);
-    console.log(`totalEstimatedEnergyUsage ${totalEstimatedEnergyUsage}`);
-    console.log(`totalEstimatedSpawnUsage ${totalEstimatedSpawnUsage}`);
+    //console.log(`totalEstimatedCPUUsage ${totalEstimatedCPUUsage}`)
+    //console.log(`totalEstimatedEnergyUsage ${totalEstimatedEnergyUsage}`)  
+    //console.log(`totalEstimatedSpawnUsage ${totalEstimatedSpawnUsage}`)        
     return [totalEstimatedCPUUsage / Game.cpu.limit, totalEstimatedEnergyUsage, totalEstimatedSpawnUsage];
 };
 //# sourceMappingURL=baseManager.js.map

@@ -7,6 +7,7 @@ let roleMiner: {
     run(creep: Creep): void
 }
 
+
 export default roleMiner = {
     run(creep): void {
         try {

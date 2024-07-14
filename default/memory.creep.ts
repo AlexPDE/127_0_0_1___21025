@@ -7,4 +7,5 @@ enum MemoryRole{
     SCOUT = "scout"
 }
 
+
 export default MemoryRole;

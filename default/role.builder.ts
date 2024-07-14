@@ -97,3 +97,4 @@ export let typeBuilder:creepType = {
     name:"Builder " + Game.time,
     state:"justSpawned",
 }
+

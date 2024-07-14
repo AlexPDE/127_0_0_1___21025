@@ -78,7 +78,6 @@ initCreepPrototypes= ()=>{
                             console.log(`spawn ${spawn}`)
                             if(spawn instanceof Spawn){
                                 flag = Game.flags[spawn.room.name]
-                                console.log(flag)
                                 if(flag.memory.energyRequired){
                                     if(flag.memory.energyRequired>0){
                                         creep.memory.targetId = spawn.room.name
@@ -152,6 +151,7 @@ initCreepPrototypes= ()=>{
         // }
 
 }
+
 
 
 export default initCreepPrototypes
