@@ -112,6 +112,7 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
                 flag.memory.estimatedCPUUsage = 5
                 flag.memory.estimatedEnergyUsage = 500/1500
                 flag.memory.estimatedSpawnUsage = 15/1500
+                Memory.baseManager[baseRoom.name].potentialSources.push(flag.name)
                 if(enableMining){
                     enableMiningFlag(flag,baseRoom)
                 }
@@ -215,6 +216,7 @@ initBaseManager = (room:Room) =>{
             [baseName]:{
                 RCL:1,
                 sources: [],
+                potentialSources: [],
                 energyRequests: [],
                 RecquestesSpawns:[],
                 strategy: "initiate",
@@ -324,6 +326,23 @@ try {
 
         default:console.log(`strategy set in BaseManager for ${room.name} is not defined: ${strategy}`)
     }
+
+    //imideate goal managment like opening up new Mines or upgrading 
+    switch(Memory.baseManager[room.name].imidiateGoal){
+        case "expandSources":
+            let isRequestingMiner = false
+            for(let i in Memory.baseManager[room.name].potentialSources){
+
+            }
+            console.log("we need to open up mines")
+            break;
+            
+        default: 
+        console.log(`base manager has an imidiate goal that is undefined ${Memory.baseManager[room.name].imidiateGoal}`)
+    }
+    Memory.baseManager[room.name].RecquestesSpawns
+
+
     //evaluation how much energy is used------------------------
     let estimeteResourcesNow = estimateResourcesRequired(room)
     let cpuLimiting = false
@@ -344,9 +363,11 @@ try {
             spawnLimiting = true
         }
     }
-    console.log("test111")
     console.log(`CPU Estimation: ${estimeteResourcesNow[0]} cpuLimiting ${cpuLimiting} ||EnergyRequired Estimation: ${estimeteResourcesNow[1]} energyLimiting ${energyLimiting} ||Spawn time Estimation: ${estimeteResourcesNow[2]} spawnLimiting ${spawnLimiting}`)
-
+    if(!cpuLimiting && !energyLimiting && !spawnLimiting){
+        console.log(`botResources are not limitting. therefore expend mining operation`)
+        Memory.baseManager[room.name].imidiateGoal = "expandSources"
+    }
 
 } catch (error) {
     console.log("error in baseManager",error)
@@ -388,7 +409,7 @@ estimateResourcesRequired=(room:Room): [Number, Number, Number] =>{
     console.log(`totalEstimatedCPUUsage ${totalEstimatedCPUUsage}`)
     console.log(`totalEstimatedEnergyUsage ${totalEstimatedEnergyUsage}`)  
     console.log(`totalEstimatedSpawnUsage ${totalEstimatedSpawnUsage}`)        
-    return [totalEstimatedCPUUsage,totalEstimatedEnergyUsage,totalEstimatedSpawnUsage]  
+    return [totalEstimatedCPUUsage/Game.cpu.limit,totalEstimatedEnergyUsage,totalEstimatedSpawnUsage]  
 }
 
 

@@ -13,6 +13,7 @@ declare global {
            [key:string]:{
             RCL:number;
             sources:string[];
+            potentialSources:string[];
             energyRequests:string[];
             RecquestesSpawns:spawnRequestType[];
             strategy:string;
