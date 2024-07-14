@@ -24,20 +24,20 @@ exports.dynamicSpawn = dynamicSpawn = (baseRoom) => {
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0];
                 let ret = -1;
                 if (request[i].role == memory_creep_1.default.MINER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeMiner, request[i].target);
+                    ret = spawn.spawnTypeCreep(request[i].body, spawn, creepBodys_1.typeMiner, request[i].target);
                 }
                 if (request[i].role == memory_creep_1.default.HAULER && !spawning) {
                     let a;
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeHauler);
+                    ret = spawn.spawnTypeCreep(request[i].body, spawn, creepBodys_1.typeHauler);
                 }
                 if (request[i].role == memory_creep_1.default.BUILDER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeBuilder, request[i].target);
+                    ret = spawn.spawnTypeCreep(request[i].body, spawn, creepBodys_1.typeBuilder, request[i].target);
                 }
                 if (request[i].role == memory_creep_1.default.UPGRADER && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeUpgrader);
+                    ret = spawn.spawnTypeCreep(request[i].body, spawn, creepBodys_1.typeUpgrader);
                 }
                 if (request[i].role == memory_creep_1.default.SCOUT && !spawning) {
-                    ret = spawn.spawnTypeCreep(request[i].maxSize, spawn, creepBodys_1.typeScout);
+                    ret = spawn.spawnTypeCreep(request[i].body, spawn, creepBodys_1.typeScout);
                 }
                 if (ret == OK) {
                     spawning = true;
@@ -49,17 +49,21 @@ exports.dynamicSpawn = dynamicSpawn = (baseRoom) => {
         }
     }
 };
-exports.addSpawnRequest = addSpawnRequest = (maxSize, role, baseRoom, target) => {
+exports.addSpawnRequest = addSpawnRequest = (body, role, baseRoom, target) => {
     if (target) {
-        let entry = { maxSize: maxSize, role: role, target: target };
+        let entry = { body: body, role: role, target: target };
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
     }
     else {
-        let entry = { maxSize: maxSize, role };
+        let entry = { body: body, role };
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
     }
 };
-addRequestForFastFiller = (typeFastfiller, baseRoom) => {
-    addSpawnRequest(typeFastfiller, baseRoom);
+addRequestForFastFiller = (size, typeFastfiller, baseRoom) => {
+    switch (size) {
+        case creepBodys_1.default.MAXFASTFILLER:
+            addSpawnRequest(creepBodys_1.default.MAXFASTFILLER, typeFastfiller, baseRoom);
+            break;
+    }
 };
 //# sourceMappingURL=spawnManager.js.map

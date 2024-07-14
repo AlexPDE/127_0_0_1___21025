@@ -1,6 +1,6 @@
 import MemoryRole from "./memory.creep"
 import * as _ from "lodash"
-import { typeScout ,typeHauler, typeMiner, typeBuilder, typeUpgrader, typeFastfiller } from "./creepBodys";
+import bodyTypes, { typeScout ,typeHauler, typeMiner, typeBuilder, typeUpgrader, typeFastfiller } from "./creepBodys";
 
 let spawnManager:Function
 let addRequestForFastFiller:Function
@@ -26,20 +26,20 @@ dynamicSpawn = (baseRoom:Room) =>{
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0] 
                 let ret: ScreepsReturnCode =-1
                 if(request[i].role == MemoryRole.MINER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeMiner,request[i].target)
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeMiner,request[i].target)
                 }
                 if(request[i].role == MemoryRole.HAULER &&!spawning){
                     let a:spawnRequestType
-                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeHauler)
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeHauler)
                 }
                 if(request[i].role == MemoryRole.BUILDER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeBuilder,request[i].target)
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeBuilder,request[i].target)
                 }
                 if(request[i].role == MemoryRole.UPGRADER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeUpgrader)
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeUpgrader)
                 }
                 if(request[i].role == MemoryRole.SCOUT &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].maxSize,spawn,typeScout)
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeScout)
                 }
                 if(ret == OK){
                     spawning = true;
@@ -53,20 +53,25 @@ dynamicSpawn = (baseRoom:Room) =>{
 }   
 
 
-addSpawnRequest = (maxSize:string, role:string ,baseRoom:Room,target?:string) =>{
+addSpawnRequest = (body:BodyPartConstant[], role:string ,baseRoom:Room,target?:string) =>{
     if(target){
-        let entry = {maxSize:maxSize, role:role,target:target}
+        let entry = {body:body, role:role,target:target}
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry)
     }else{
-        let entry = {maxSize:maxSize,role}
+        let entry = {body:body,role}
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry)
     }
 }
 
 
 
-addRequestForFastFiller = (typeFastfiller:creepType,baseRoom:Room) =>{
-    addSpawnRequest(typeFastfiller,baseRoom) 
+addRequestForFastFiller = (size:string, typeFastfiller:creepType,baseRoom:Room) =>{
+    switch(size){
+        case bodyTypes.MAXFASTFILLER:
+            addSpawnRequest(bodyTypes.MAXFASTFILLER ,typeFastfiller,baseRoom) 
+            break
+    }
+    
 }
 
 export {addSpawnRequest}

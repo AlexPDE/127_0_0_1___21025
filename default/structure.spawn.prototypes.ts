@@ -4,8 +4,7 @@ import MemoryRole from "./memory.creep"
 let initStructureSpawnPrototypes:Function
 
 initStructureSpawnPrototypes= ()=>{
-    StructureSpawn.prototype.spawnTypeCreep = (maxSize: string, spawn:StructureSpawn, creepType:creepType, flagId?)=>{
-         let body = creepType.baseBody 
+    StructureSpawn.prototype.spawnTypeCreep = (body:BodyPartConstant[], spawn:StructureSpawn, creepType:creepType, flagId?)=>{
         // if(maxSize){
         //     let room = spawn.room
         //     let energyBody = 0

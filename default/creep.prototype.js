@@ -45,7 +45,6 @@ initCreepPrototypes = () => {
     Creep.prototype.deliverEnergy = (creep) => {
         // no target selected therefore choosing where to deliver to.
         if (!creep.memory.flagId) {
-            console.log(`creep.memory.flagId ${creep.memory.flagId}`);
             let energyRequests = [];
             //adding the spawn flag
             energyRequests.push(creep.memory.base);

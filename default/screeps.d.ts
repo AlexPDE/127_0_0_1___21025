@@ -61,9 +61,8 @@ declare global {
     
     interface spawnRequestType{
         role:string;
-        body?:string[];
+        body:BodyPartConstant[];
         target?:string;
-        maxSize:string;
     }
 
     interface Base {

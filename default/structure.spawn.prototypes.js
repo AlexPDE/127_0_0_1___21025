@@ -3,8 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const memory_creep_1 = require("./memory.creep");
 let initStructureSpawnPrototypes;
 initStructureSpawnPrototypes = () => {
-    StructureSpawn.prototype.spawnTypeCreep = (maxSize, spawn, creepType, flagId) => {
-        let body = creepType.baseBody;
+    StructureSpawn.prototype.spawnTypeCreep = (body, spawn, creepType, flagId) => {
         // if(maxSize){
         //     let room = spawn.room
         //     let energyBody = 0

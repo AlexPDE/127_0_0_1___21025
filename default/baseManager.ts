@@ -251,6 +251,7 @@ try {
             let container = containerPos.lookFor(LOOK_STRUCTURES)[0]
             if(container){
                 Memory.baseManager[room.name].fastFillerActive = true
+                
                 //Memory.baseManager[room.name].strategy = "planRCL2Base"
             }
             
