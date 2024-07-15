@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeFastfiller = exports.typeRemoteMiner = exports.typeMiner = exports.typeUpgrader = exports.typeBuilder = exports.typeHauler = exports.typeScout = void 0;
+const memory_creep_1 = require("./memory.creep");
 exports.typeScout = {
     role: "scout",
     baseBody: [MOVE],
@@ -35,7 +36,7 @@ exports.typeUpgrader = {
 };
 exports.typeMiner = {
     role: "miner",
-    baseBody: [MOVE, WORK, WORK],
+    baseBody: [MOVE, WORK],
     body: [WORK],
     name: "Miner",
     state: "justSpawned",
@@ -50,16 +51,17 @@ exports.typeRemoteMiner = {
     max: 5,
 };
 exports.typeFastfiller = {
-    role: "miner",
+    role: memory_creep_1.default.FASTFILLER,
     baseBody: [MOVE, CARRY],
     body: [CARRY],
-    name: "Miner",
+    name: "fastFiller",
     state: "justSpawned",
     max: 1,
 };
 var bodyTypes;
 (function (bodyTypes) {
     bodyTypes["MAXFASTFILLER"] = "maxFastFiller";
+    bodyTypes["MAXMINER"] = "maxMiner";
 })(bodyTypes || (bodyTypes = {}));
 exports.default = bodyTypes;
 //# sourceMappingURL=creepBodys.js.map

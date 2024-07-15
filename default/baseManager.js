@@ -5,6 +5,7 @@ const _ = require("lodash");
 const memory_creep_1 = require("./memory.creep");
 const energyRequestFlagTypes_1 = require("./energyRequestFlagTypes");
 const analytics_1 = require("./analytics");
+const creepBodys_1 = require("./creepBodys");
 const spawnManager_1 = require("./spawnManager");
 let baseManager;
 let initBaseManager;
@@ -104,8 +105,8 @@ enableMiningFlag = (flag) => {
         if (flag.memory.assignedBase) {
             let baseRoom = Game.rooms[flag.memory.assignedBase];
             console.log(`enable mining for source  ${flag.name}`);
-            (0, spawnManager_1.addSpawnRequest)("true", memory_creep_1.default.MINER, baseRoom, flag.name);
-            (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.HAULER, baseRoom);
+            (0, spawnManager_1.addRequestForMiner)(baseRoom, flag.name);
+            //addSpawnRequest("false",MemoryRole.HAULER,baseRoom)
             Memory.baseManager[baseRoom.name].sources.push(flag.name);
             for (let i = 0; i < Memory.baseManager[baseRoom.name].potentialSources.length; i++) {
                 if (Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name) {
@@ -118,7 +119,7 @@ enableMiningFlag = (flag) => {
         }
     }
     catch (error) {
-        console.log(`error in enableMininfFlag`);
+        console.log(`error in enableMininfFlag ${error}`);
     }
 };
 removeSourceFlag = (flag, baseRoom) => {
@@ -174,7 +175,7 @@ addUpgraderFlag = (baseRoom) => {
             let path = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name], { ignoreCreeps: true });
             let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name);
             addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id, energyRequestFlagTypes_1.default.UPGRADER);
-            (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.UPGRADER, baseRoom);
+            //addSpawnRequest("false",MemoryRole.UPGRADER,baseRoom)
         }
     }
     catch (error) {
@@ -192,7 +193,7 @@ baseManager = (room) => {
         if (!constructionFlag && constructionsSite) {
             addConstructionFlag(constructionsSite, room);
             if (builder.length == 0) {
-                (0, spawnManager_1.addSpawnRequest)("true", memory_creep_1.default.BUILDER, room, constructionsSite.id);
+                //addSpawnRequest("true",MemoryRole.BUILDER,room,constructionsSite.id)
             }
         }
         //------------------------------------- base stategy -----------------------------------
@@ -204,6 +205,7 @@ baseManager = (room) => {
         switch (strategy) {
             case "initiate":
                 Memory.baseManager[room.name].strategy = "waitForInitialCreeps";
+                (0, spawnManager_1.addRequestForHauler)("min", room);
                 break;
             case "waitForInitialCreeps":
                 const builder = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.BUILDER);
@@ -212,7 +214,7 @@ baseManager = (room) => {
                 const hauler = _.filter(Game.creeps, (creep) => creep.memory.role == memory_creep_1.default.HAULER);
                 if (miner.length > 1 && hauler.length > 0) {
                     Memory.baseManager[room.name].strategy = "buildOutBaseContainer";
-                    (0, spawnManager_1.addSpawnRequest)("false", memory_creep_1.default.SCOUT, room);
+                    //addSpawnRequest("false",MemoryRole.SCOUT,room)
                 }
                 break;
             case "buildOutBaseContainer":
@@ -221,7 +223,8 @@ baseManager = (room) => {
                 let container = containerPos.lookFor(LOOK_STRUCTURES)[0];
                 if (container) {
                     Memory.baseManager[room.name].fastFillerActive = true;
-                    //Memory.baseManager[room.name].strategy = "planRCL2Base"
+                    (0, spawnManager_1.addRequestForFastFiller)(creepBodys_1.default.MAXFASTFILLER, room);
+                    Memory.baseManager[room.name].strategy = "planRCL2Base";
                 }
                 break;
             case "planRCL2Base":

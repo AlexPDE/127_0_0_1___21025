@@ -1,3 +1,5 @@
+import MemoryRole from "./memory.creep"
+
 export let typeScout:creepType = {
     role:"scout",
     baseBody:[MOVE],
@@ -36,7 +38,7 @@ export let typeUpgrader:creepType = {
 
 export let typeMiner:creepType = {
     role:"miner",
-    baseBody:[MOVE,WORK,WORK],
+    baseBody:[MOVE,WORK],
     body:[WORK],
     name:"Miner",
     state:"justSpawned",
@@ -53,18 +55,29 @@ export let typeRemoteMiner:creepType = {
 }
 
 export let typeFastfiller:creepType = {
-    role:"miner",
+    role: MemoryRole.FASTFILLER,
     baseBody:[MOVE,CARRY],
     body:[CARRY],
-    name:"Miner",
+    name:"fastFiller",
     state:"justSpawned",
     max:1,
 }
 
 enum bodyTypes{
     MAXFASTFILLER = "maxFastFiller",
+    MAXMINER = "maxMiner",
 
 }
 
 
 export default bodyTypes;
+
+
+type creepType = {
+    role:string,
+    baseBody:BodyPartConstant[],
+    body:BodyPartConstant[],
+    name:string,
+    state:string,
+    max:number,
+}

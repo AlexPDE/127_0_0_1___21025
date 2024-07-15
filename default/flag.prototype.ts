@@ -87,9 +87,7 @@ initFlagPrototypes= ()=>{
         // check the energy required
         let scheduledDeliverys = flag.memory.scheduledDeliverys
         let eneryOnRoute = 0
-        if(scheduledDeliverys){
-
-        
+        if(scheduledDeliverys){        
             for (let i = 0 ; i < scheduledDeliverys.length;i++){
                 let creep = Game.getObjectById(scheduledDeliverys[i].creepId)
                 if(creep ===null){
@@ -98,9 +96,7 @@ initFlagPrototypes= ()=>{
 
                 }
                 else{
-
                     eneryOnRoute = eneryOnRoute + scheduledDeliverys[i]["amount"]
-
                 }
             }
         }

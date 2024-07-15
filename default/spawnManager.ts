@@ -6,6 +6,9 @@ let spawnManager:Function
 let addRequestForFastFiller:Function
 let addSpawnRequest: Function;
 let dynamicSpawn:Function;
+let addMaxSizeRequest:Function
+let addRequestForMiner:Function
+let addRequestForHauler:Function
 
 spawnManager = (room:Room) => {
     console.log("spawnManager is running")
@@ -24,23 +27,29 @@ dynamicSpawn = (baseRoom:Room) =>{
         for ( i; i < request.length; i++ ){
             if(!spawning){
                 let spawn = baseRoom.find(FIND_MY_SPAWNS)[0] 
-                let ret: ScreepsReturnCode =-1
-                if(request[i].role == MemoryRole.MINER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeMiner,request[i].target)
-                }
-                if(request[i].role == MemoryRole.HAULER &&!spawning){
-                    let a:spawnRequestType
-                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeHauler)
-                }
-                if(request[i].role == MemoryRole.BUILDER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeBuilder,request[i].target)
-                }
-                if(request[i].role == MemoryRole.UPGRADER &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeUpgrader)
-                }
-                if(request[i].role == MemoryRole.SCOUT &&!spawning){
-                    ret = spawn.spawnTypeCreep(request[i].body,spawn,typeScout)
-                }
+                let ret: ScreepsReturnCode
+                if(request[i].target){
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,request[i].role,request[i].target)
+                }else{
+                    ret = spawn.spawnTypeCreep(request[i].body,spawn,request[i].role,spawn)
+                }             
+                
+                // if(request[i].role == MemoryRole.MINER &&!spawning){
+                //     ret = spawn.spawnTypeCreep(request[i].body,spawn,typeMiner,request[i].target)
+                // }
+                // if(request[i].role == MemoryRole.HAULER &&!spawning){
+                //     let a:spawnRequestType
+                //     ret = spawn.spawnTypeCreep(request[i].body,spawn,typeHauler)
+                // }
+                // if(request[i].role == MemoryRole.BUILDER &&!spawning){
+                //     ret = spawn.spawnTypeCreep(request[i].body,spawn,typeBuilder,request[i].target)
+                // }
+                // if(request[i].role == MemoryRole.UPGRADER &&!spawning){
+                //     ret = spawn.spawnTypeCreep(request[i].body,spawn,typeUpgrader)
+                // }
+                // if(request[i].role == MemoryRole.SCOUT &&!spawning){
+                //     ret = spawn.spawnTypeCreep(request[i].body,spawn,typeScout)
+                // }
                 if(ret == OK){
                     spawning = true;
                     Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i,1)
@@ -54,8 +63,13 @@ dynamicSpawn = (baseRoom:Room) =>{
 
 
 addSpawnRequest = (body:BodyPartConstant[], role:string ,baseRoom:Room,target?:string) =>{
+    console.log("addSpawnRequest is running")
+    console.log("target", target)
     if(target){
+        console.log("add spawn has target ",target)
         let entry = {body:body, role:role,target:target}
+        console.log("add spawn has targer ")
+        console.log("Memory.baseManager[baseRoom.name] ", Memory.baseManager[baseRoom.name])
         Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry)
     }else{
         let entry = {body:body,role}
@@ -63,17 +77,66 @@ addSpawnRequest = (body:BodyPartConstant[], role:string ,baseRoom:Room,target?:s
     }
 }
 
+addRequestForMiner = (baseRoom:Room, target:string) => {
+        let body = addMaxSizeRequest(typeMiner, baseRoom)
+        console.log("typeMiner" , typeMiner.role)
+        addSpawnRequest(body, typeMiner.role,baseRoom,target) 
+}
+
+addRequestForHauler = (size:string,baseRoom:Room) =>{
+    switch(size){
+        case "min":
+            addSpawnRequest(typeHauler.baseBody, typeHauler.role,baseRoom) 
+    }
+}
 
 
-addRequestForFastFiller = (size:string, typeFastfiller:creepType,baseRoom:Room) =>{
+addRequestForFastFiller = (size:string,baseRoom:Room) =>{
     switch(size){
         case bodyTypes.MAXFASTFILLER:
-            addSpawnRequest(bodyTypes.MAXFASTFILLER ,typeFastfiller,baseRoom) 
-            break
+            let body = addMaxSizeRequest(typeFastfiller, baseRoom)
+            addSpawnRequest(body, typeFastfiller.role,baseRoom) 
+            break;
+
+        default: console.log(`in addRequestForFastFiller a bodyType is asked for that doesn´t exist ${size}`)
     }
     
 }
 
+addMaxSizeRequest = (creepBodyType: creepType, baseRoom:Room)=>{
+    
+    let body = []
+    let bodyToAdd = []
+    let basebody = creepBodyType.baseBody
+    let costBody = 0
+    let costBodyToAdd = 0 
+    
+    for (let i = 0 ; i <basebody.length; i++){
+            body.push(basebody[i])
+            costBody = costBody + BODYPART_COST[basebody[i]]
+    }
+
+    let addBody = creepBodyType.body
+    for (let k = 0 ; k<addBody.length;k++){
+        bodyToAdd.push(addBody[k])
+        costBodyToAdd = costBodyToAdd + BODYPART_COST[addBody[k]]
+    }
+
+    let numbBodyToAddMaxRoom = Math.floor((baseRoom.energyCapacityAvailable - costBody)/costBodyToAdd)
+    let numbBodyToAdd = Math.min(numbBodyToAddMaxRoom,creepBodyType.max)
+
+    for ( let i = 0 ; i < numbBodyToAdd ; i++){
+        for ( let k = 0 ; k < bodyToAdd.length; k++){
+            body.push(bodyToAdd[k])
+        }
+    }
+    
+    return body
+}
+
+        
+
+export {addRequestForFastFiller, addRequestForMiner, addRequestForHauler}
 export {addSpawnRequest}
 export {dynamicSpawn}
 export {spawnManager}

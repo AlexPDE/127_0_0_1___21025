@@ -12,12 +12,13 @@ const diedCreepManagment_1 = require("./diedCreepManagment");
 const role_scout_1 = require("./role.scout");
 const analytics_1 = require("./analytics");
 const flag_prototype_1 = require("./flag.prototype");
+const role_fastFiller_1 = require("./role.fastFiller");
 function loop() {
     try {
+        //addRequestForFastFiller(bodyTypes.MAXFASTFILLER,Game.rooms["W8N3"])
         console.log(`-----------------------tick ${Game.time}-----------------------------------`);
         (0, prototypesInit_1.default)();
         (0, flag_prototype_1.updateAllFlags)();
-        var totalEnergyHarvested = 0;
         for (let i in Game.flags) {
             let flag = Game.flags[i];
             if (flag.memory.type == "source") {
@@ -31,6 +32,9 @@ function loop() {
             var creep = Game.creeps[name];
             if (creep.memory.role == memory_creep_1.default.UPGRADER) {
                 role_upgrader_1.default.run(creep);
+            }
+            if (creep.memory.role == memory_creep_1.default.FASTFILLER) {
+                role_fastFiller_1.default.run(creep);
             }
             if (creep.memory.role == memory_creep_1.default.BUILDER) {
                 role_builder_1.default.run(creep);
@@ -47,8 +51,12 @@ function loop() {
             //testing Functions here--------------------------
         }
         //setStrategy here every 10 ticks
-        if (Game.time % 10 == 0) {
-        }
+        // if(Game.time%4 == 0){
+        //     for (let i of keys(Game.flags)){
+        //         Game.flags[i].remove()
+        //         delete Memory.baseManager
+        //     }
+        // }
         //analytics
         (0, analytics_1.genericAnalyticsCalculations)();
         let CPUBeforAnalytics = Game.cpu.getUsed();

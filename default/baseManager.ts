@@ -2,8 +2,8 @@ import * as _ from "lodash"
 import MemoryRole from "./memory.creep"
 import EnergyRequestFlagTypes from "./energyRequestFlagTypes";
 import { initialiseAnalytics } from "./analytics";
-import { typeScout ,typeHauler, typeMiner, typeBuilder, typeUpgrader } from "./creepBodys";
-import { addSpawnRequest, spawnManager,dynamicSpawn } from "./spawnManager";
+import bodyTypes, { typeScout ,typeHauler, typeMiner, typeBuilder, typeUpgrader } from "./creepBodys";
+import { addSpawnRequest, spawnManager,dynamicSpawn, addRequestForFastFiller, addRequestForMiner, addRequestForHauler } from "./spawnManager";
 
 
 
@@ -108,14 +108,15 @@ addSourceFlagsForRoom = (room:Room, baseRoom:Room, enableMining:boolean) =>{
 
 export {addSourceFlagsForRoom}
 
+
 enableMiningFlag = (flag:Flag) =>{
     try {
         if(flag.memory.assignedBase){
             let baseRoom = Game.rooms[flag.memory.assignedBase]
             console.log(`enable mining for source  ${flag.name}`)
             
-            addSpawnRequest("true",MemoryRole.MINER,baseRoom,flag.name)
-            addSpawnRequest("false",MemoryRole.HAULER,baseRoom)
+            addRequestForMiner(baseRoom,flag.name)
+            //addSpawnRequest("false",MemoryRole.HAULER,baseRoom)
             Memory.baseManager[baseRoom.name].sources.push(flag.name)
             for (let i = 0; i< Memory.baseManager[baseRoom.name].potentialSources.length; i++){
                 if(Memory.baseManager[baseRoom.name].potentialSources[i] == flag.name){
@@ -130,7 +131,7 @@ enableMiningFlag = (flag:Flag) =>{
         
        
     } catch (error) {
-        console.log(`error in enableMininfFlag`)
+        console.log(`error in enableMininfFlag ${error}`)
     }    
 }
 
@@ -188,15 +189,13 @@ removeEnergyRequestFlag = (name:string) =>{
     flag.remove()
 }
 
-
-
 addUpgraderFlag=(baseRoom:Room)=>{
     try {
         if(baseRoom.controller){
             let path:PathStep[] = baseRoom.controller.pos.findPathTo(Game.flags[baseRoom.name],{ignoreCreeps:true})
             let pos = new RoomPosition(path[0].x, path[0].y, baseRoom.name)
             addEnergyRequestFlag(pos, baseRoom, baseRoom.controller.id,EnergyRequestFlagTypes.UPGRADER)
-            addSpawnRequest("false",MemoryRole.UPGRADER,baseRoom)
+            //addSpawnRequest("false",MemoryRole.UPGRADER,baseRoom)
         } 
     } catch (error) {
         console.log(`error in addUpgraderFlag`)
@@ -218,7 +217,7 @@ try {
     if(!constructionFlag &&constructionsSite){
         addConstructionFlag(constructionsSite, room)
         if(builder.length == 0){
-            addSpawnRequest("true",MemoryRole.BUILDER,room,constructionsSite.id)
+            //addSpawnRequest("true",MemoryRole.BUILDER,room,constructionsSite.id)
         }
     }
     //------------------------------------- base stategy -----------------------------------
@@ -230,6 +229,7 @@ try {
     switch(strategy){
         case"initiate":
             Memory.baseManager[room.name].strategy = "waitForInitialCreeps"
+            addRequestForHauler("min",room)
             break;
 
         case"waitForInitialCreeps":
@@ -239,7 +239,7 @@ try {
             const hauler:Creep[] = _.filter(Game.creeps, (creep:Creep): boolean => creep.memory.role == MemoryRole.HAULER)
             if (miner.length > 1 && hauler.length > 0){
                 Memory.baseManager[room.name].strategy = "buildOutBaseContainer"
-                addSpawnRequest("false",MemoryRole.SCOUT,room)
+                //addSpawnRequest("false",MemoryRole.SCOUT,room)
             }
             break;
 
@@ -251,8 +251,8 @@ try {
             let container = containerPos.lookFor(LOOK_STRUCTURES)[0]
             if(container){
                 Memory.baseManager[room.name].fastFillerActive = true
-                
-                //Memory.baseManager[room.name].strategy = "planRCL2Base"
+                addRequestForFastFiller(bodyTypes.MAXFASTFILLER,room)
+                Memory.baseManager[room.name].strategy = "planRCL2Base"
             }
             
 

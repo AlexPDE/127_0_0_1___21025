@@ -1,5 +1,6 @@
 declare global {
     interface CreepMemory {
+        targetPos?:RoomPosition
         role:string;  
         state?:string;
         targetId?:string;

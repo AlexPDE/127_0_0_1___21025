@@ -10,17 +10,18 @@ import roleScout from "./role.scout";
 import { calculateAverage, genericAnalyticsCalculations, startAnalytics } from "./analytics";
 import { updateAllFlags } from "./flag.prototype";
 import { forEach, keys } from "lodash"
+import roleFastFiller from "./role.fastFiller";
+import { addRequestForFastFiller } from "./spawnManager";
+import bodyTypes from "./creepBodys";
 
 
 export function loop():void{
     try {
-        
+        //addRequestForFastFiller(bodyTypes.MAXFASTFILLER,Game.rooms["W8N3"])
         console.log(`-----------------------tick ${Game.time}-----------------------------------`)
         initPrototypes()
         updateAllFlags()
-         var totalEnergyHarvested = 0
 
-        
         for (let i in Game.flags){
             let flag = Game.flags[i]
             if(flag.memory.type == "source"){
@@ -35,6 +36,9 @@ export function loop():void{
 
             if(creep.memory.role == MemoryRole.UPGRADER){
                 roleUpgrader.run(creep)
+            }
+            if(creep.memory.role == MemoryRole.FASTFILLER){
+                roleFastFiller.run(creep)
             }
             if(creep.memory.role == MemoryRole.BUILDER){
                 roleBuilder.run(creep)
@@ -54,9 +58,15 @@ export function loop():void{
         }
         //setStrategy here every 10 ticks
 
-        if(Game.time%10 == 0){
-            
-        }
+        // if(Game.time%4 == 0){
+        //     for (let i of keys(Game.flags)){
+        //         Game.flags[i].remove()
+        //         delete Memory.baseManager
+        //     }
+        // }
+
+        
+
 
         //analytics
         genericAnalyticsCalculations()
