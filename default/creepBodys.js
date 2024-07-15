@@ -36,7 +36,7 @@ exports.typeUpgrader = {
 };
 exports.typeMiner = {
     role: "miner",
-    baseBody: [MOVE, WORK],
+    baseBody: [MOVE],
     body: [WORK],
     name: "Miner",
     state: "justSpawned",

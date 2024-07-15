@@ -1,5 +1,5 @@
 import * as _ from "lodash"
-import { addEnergyRequestFlag } from "./baseManager"
+
 import { forEach, keys } from "lodash"
 
 let initFlagPrototypes:Function
@@ -117,7 +117,7 @@ initFlagPrototypes= ()=>{
                 }
                 if(willAdd){
                     flag.memory.extensions.push(extensions[i].id)
-                    addEnergyRequestFlag(extensions[i].pos, extensions[i].room, extensions[i].id, "extension")
+                    //addEnergyRequestFlag(extensions[i].pos, extensions[i].room, extensions[i].id, "extension")
                 }
             }
             

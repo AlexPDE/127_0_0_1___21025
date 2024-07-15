@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAllFlags = void 0;
-const baseManager_1 = require("./baseManager");
 const lodash_1 = require("lodash");
 let initFlagPrototypes;
 let updateAllFlags;
@@ -100,7 +99,7 @@ initFlagPrototypes = () => {
                 }
                 if (willAdd) {
                     flag.memory.extensions.push(extensions[i].id);
-                    (0, baseManager_1.addEnergyRequestFlag)(extensions[i].pos, extensions[i].room, extensions[i].id, "extension");
+                    //addEnergyRequestFlag(extensions[i].pos, extensions[i].room, extensions[i].id, "extension")
                 }
             }
         }

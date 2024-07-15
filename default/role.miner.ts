@@ -23,12 +23,13 @@ export default roleMiner = {
                     break;
 
                 case `hasNoEnergy`:
-                    if(creep.memory.flagId){
-                        var sourceId = creep.memory.flagId
+                    if(creep.memory.targetId){
+                        var sourceId = creep.memory.targetId
                         let flag = Game.flags[sourceId]
                         creep.moveTo(flag)
                         if(creep.pos.isEqualTo(Game.flags[sourceId].pos)){
                             creep.memory.state = "mining"
+                            // here the Memory for the flag needs to be reset that the miner spans in creep ticks to live
                         }
                     }else{
                         console.log(`Miner has a flagId in  memory that is not defined`)
@@ -36,8 +37,8 @@ export default roleMiner = {
                     break;
                 
                 case `mining`:
-                    if(creep.memory.flagId){
-                        var sourceId = creep.memory.flagId
+                    if(creep.memory.targetId){
+                        var sourceId = creep.memory.targetId
                         let source = Game.getObjectById(sourceId)
                         if(source instanceof Source){
                             if(creep.harvest(source) === OK){
