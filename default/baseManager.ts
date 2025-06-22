@@ -86,7 +86,7 @@ export default baseManager = {
 //                 sources: [],
 //                 potentialSources: [],
 //                 energyRequests: [],
-//                 RecquestesSpawns:[],
+//                 requestedSpawns:[],
 //                 strategy: "initiate",
 //                 imidiateGoal: "expandSources",
 //                 exploredRooms:{},
@@ -386,7 +386,7 @@ export default baseManager = {
 //         default: 
 //         console.log(`base manager has an imidiate goal that is undefined ${Memory.baseManager[room.name].imidiateGoal}`)
 //     }
-//     Memory.baseManager[room.name].RecquestesSpawns
+//     Memory.baseManager[room.name].requestedSpawns
 
 //     //evaluation how much energy is used------------------------
 //     let estimeteResourcesNow = estimateResourcesRequired(room)

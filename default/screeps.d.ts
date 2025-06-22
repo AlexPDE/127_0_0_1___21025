@@ -90,7 +90,7 @@ declare global {
                 sources:string[];
                 potentialSources:string[];
                 energyRequests:string[];
-                RecquestesSpawns:spawnRequestType[];
+                requestedSpawns:spawnRequestType[];
                 strategy:string;
                 imidiateGoal:string;
                 exploredRooms:{

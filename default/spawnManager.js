@@ -19,7 +19,7 @@ exports.spawnManager = spawnManager = (room) => {
 };
 exports.dynamicSpawn = dynamicSpawn = (baseRoom) => {
     let spawning = false;
-    let request = Memory.baseManager[baseRoom.name].RecquestesSpawns;
+    let request = Memory.baseManager[baseRoom.name].requestedSpawns;
     let i = 0;
     if (request[0]) {
         for (i; i < request.length; i++) {
@@ -50,7 +50,7 @@ exports.dynamicSpawn = dynamicSpawn = (baseRoom) => {
                 // }
                 if (ret == OK) {
                     spawning = true;
-                    Memory.baseManager[baseRoom.name].RecquestesSpawns.splice(i, 1);
+                    Memory.baseManager[baseRoom.name].requestedSpawns.splice(i, 1);
                     let requiredEnergy = baseRoom.energyCapacityAvailable;
                     Game.flags[baseRoom.memory.baseFlagName].memory.energyRequired = requiredEnergy;
                 }
@@ -66,11 +66,11 @@ exports.addSpawnRequest = addSpawnRequest = (body, role, baseRoom, target) => {
         let entry = { body: body, role: role, target: target };
         console.log("add spawn has targer ");
         console.log("Memory.baseManager[baseRoom.name] ", Memory.baseManager[baseRoom.name]);
-        Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
+        Memory.baseManager[baseRoom.name].requestedSpawns.push(entry);
     }
     else {
         let entry = { body: body, role };
-        Memory.baseManager[baseRoom.name].RecquestesSpawns.push(entry);
+        Memory.baseManager[baseRoom.name].requestedSpawns.push(entry);
     }
 };
 exports.addRequestForMiner = addRequestForMiner = (baseRoom, target) => {
