@@ -9,8 +9,7 @@
     "experimentalDecorators": true,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
-    "types": ["node", "screeps"]
+    "allowUnreachableCode": false
   },
   "include": ["./**/*.ts", "./**/*.d.ts"],
   "exclude": ["node_modules", "dist", ".git"]
